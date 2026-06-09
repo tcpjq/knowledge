@@ -32,7 +32,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: npm
           cache-dependency-path: web/package-lock.json
 
@@ -41,8 +41,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm install
-          test -d node_modules/react
+          npm ci --no-audit --no-fund
+          npm ls react react-dom typescript vite
         working-directory: web
 
       - name: Build web
