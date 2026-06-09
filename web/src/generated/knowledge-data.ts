@@ -351,12 +351,17 @@ export const knowledgeDocs: KnowledgeDoc[] = [
       },
       {
         "level": 2,
+        "text": "网页端",
+        "slug": "网页端"
+      },
+      {
+        "level": 2,
         "text": "建设原则",
         "slug": "建设原则"
       }
     ],
-    "body": "# Knowledge\n\n这是我的个人知识库，当前重点用于沉淀技术相关知识，并辅助后续和 AI 对话、学习、方案设计与工程判断。\n\n## 入口\n\n- [知识库索引](index.md)\n- [AI 时代技术能力地图](topics/ai-era-technical-capability-map.md)\n\n## 工作流\n\n- 提问知识：先检索本仓库已有内容，再结合通用技术知识回答。\n- 沉淀知识：把聊天内容整理成结构化 Markdown 笔记，而不是保存完整聊天记录。\n- 整理知识：合并重复内容，更新分类索引，补充关联链接。\n\n## 分类\n\n- [AI](content/ai/index.md)\n- [架构与系统设计](content/architecture/index.md)\n- [工程实践](content/engineering/index.md)\n- [数据库与存储](content/database/index.md)\n- [前端](content/frontend/index.md)\n- [后端](content/backend/index.md)\n- [工具与效率](content/tools/index.md)\n- [故障与复盘](content/incidents/index.md)\n\n## 建设原则\n\n- 优先沉淀可复用的技术判断，而不是保存完整聊天记录。\n- 每个知识点尽量独立、具体、可链接。\n- 重要内容需要记录背景、取舍、例子和后续行动。\n- 后续可以接入 VitePress，提供左侧目录、右侧章节目录和全文检索。\n",
-    "searchText": "knowledge readme.md 通用 knowledge 这是我的个人知识库，当前重点用于沉淀技术相关知识，并辅助后续和 ai 对话、学习、方案设计与工程判断。 入口 - 知识库索引 - ai 时代技术能力地图 工作流 - 提问知识：先检索本仓库已有内容，再结合通用技术知识回答。 - 沉淀知识：把聊天内容整理成结构化 markdown 笔记，而不是保存完整聊天记录。 - 整理知识：合并重复内容，更新分类索引，补充关联链接。 分类 - ai - 架构与系统设计 - 工程实践 - 数据库与存储 - 前端 - 后端 - 工具与效率 - 故障与复盘 建设原则 - 优先沉淀可复用的技术判断，而不是保存完整聊天记录。 - 每个知识点尽量独立、具体、可链接。 - 重要内容需要记录背景、取舍、例子和后续行动。 - 后续可以接入 vitepress，提供左侧目录、右侧章节目录和全文检索。"
+    "body": "# Knowledge\n\n这是我的个人知识库，当前重点用于沉淀技术相关知识，并辅助后续和 AI 对话、学习、方案设计与工程判断。\n\n## 入口\n\n- [知识库索引](index.md)\n- [AI 时代技术能力地图](topics/ai-era-technical-capability-map.md)\n\n## 工作流\n\n- 提问知识：先检索本仓库已有内容，再结合通用技术知识回答。\n- 沉淀知识：把聊天内容整理成结构化 Markdown 笔记，而不是保存完整聊天记录。\n- 整理知识：合并重复内容，更新分类索引，补充关联链接。\n\n## 分类\n\n- [AI](content/ai/index.md)\n- [架构与系统设计](content/architecture/index.md)\n- [工程实践](content/engineering/index.md)\n- [数据库与存储](content/database/index.md)\n- [前端](content/frontend/index.md)\n- [后端](content/backend/index.md)\n- [工具与效率](content/tools/index.md)\n- [故障与复盘](content/incidents/index.md)\n\n## 网页端\n\n网页端位于 `web/`，内容来自本仓库 Markdown 文件，不使用数据库。\n\n常用命令：\n\n```bash\ncd web\nnpm install\nnpm run generate\nnpm run dev\nnpm run build\n```\n\n## 建设原则\n\n- 优先沉淀可复用的技术判断，而不是保存完整聊天记录。\n- 每个知识点尽量独立、具体、可链接。\n- 重要内容需要记录背景、取舍、例子和后续行动。\n- 后续可以接入 VitePress，提供左侧目录、右侧章节目录和全文检索。\n",
+    "searchText": "knowledge readme.md 通用 knowledge 这是我的个人知识库，当前重点用于沉淀技术相关知识，并辅助后续和 ai 对话、学习、方案设计与工程判断。 入口 - 知识库索引 - ai 时代技术能力地图 工作流 - 提问知识：先检索本仓库已有内容，再结合通用技术知识回答。 - 沉淀知识：把聊天内容整理成结构化 markdown 笔记，而不是保存完整聊天记录。 - 整理知识：合并重复内容，更新分类索引，补充关联链接。 分类 - ai - 架构与系统设计 - 工程实践 - 数据库与存储 - 前端 - 后端 - 工具与效率 - 故障与复盘 网页端 网页端位于 web/，内容来自本仓库 markdown 文件，不使用数据库。 常用命令： 建设原则 - 优先沉淀可复用的技术判断，而不是保存完整聊天记录。 - 每个知识点尽量独立、具体、可链接。 - 重要内容需要记录背景、取舍、例子和后续行动。 - 后续可以接入 vitepress，提供左侧目录、右侧章节目录和全文检索。"
   },
   {
     "id": "topics/ai-era-technical-capability-map",

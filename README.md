@@ -24,6 +24,20 @@
 - [工具与效率](content/tools/index.md)
 - [故障与复盘](content/incidents/index.md)
 
+## 网页端
+
+网页端位于 `web/`，内容来自本仓库 Markdown 文件，不使用数据库。
+
+常用命令：
+
+```bash
+cd web
+npm install
+npm run generate
+npm run dev
+npm run build
+```
+
 ## 建设原则
 
 - 优先沉淀可复用的技术判断，而不是保存完整聊天记录。
