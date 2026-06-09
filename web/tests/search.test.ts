@@ -22,7 +22,7 @@ const docs: SearchDoc[] = [
     section: 'architecture',
     sectionLabel: '架构与系统设计',
     tags: ['architecture'],
-    searchText: '什么是架构 技术 架构与系统设计 系统边界 数据流 取舍',
+    searchText: '什么是架构 技术 架构与系统设计 系统边界 数据流 取舍 架构需要清晰边界',
   },
   {
     id: 'content/communication/index',
@@ -84,6 +84,17 @@ assertEqual(
   'module filter limits results',
 );
 
+assertEqual(
+  searchKnowledge({
+    query: '架构 边界',
+    docs,
+    chunks,
+    modules,
+  }).map((result) => result.doc.id),
+  ['content/tech/architecture/what-is-architecture'],
+  'space-separated keywords use AND matching',
+);
+
 const chunkResults = searchKnowledge({
   query: '归谁管',
   docs,
@@ -109,4 +120,14 @@ assertEqual(
     { text: '是在约束下组织系统的方式', match: false },
   ],
   'highlights matching keyword',
+);
+
+assertEqual(
+  highlightText('知识库需要清晰架构', '知识 架构'),
+  [
+    { text: '知识', match: true },
+    { text: '库需要清晰', match: false },
+    { text: '架构', match: true },
+  ],
+  'highlights multiple keywords',
 );
