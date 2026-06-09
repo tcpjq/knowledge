@@ -5,6 +5,7 @@ import {
   type Heading,
   type KnowledgeDoc,
 } from './generated/knowledge-data';
+import { flattenDocIds, getAdjacentDocIds, getDefaultExpandedSections } from './navigation';
 
 const docById = new Map(knowledgeDocs.map((doc) => [doc.id, doc]));
 
@@ -213,26 +214,64 @@ function Toc({ headings }: { headings: Heading[] }) {
 
 export default function App() {
   const initialDoc = findInitialDoc();
+  const initialModuleId = initialDoc?.module ?? knowledgeModules[0]?.id ?? '';
+  const initialModule =
+    knowledgeModules.find((module) => module.id === initialModuleId) ?? knowledgeModules[0];
   const [selectedId, setSelectedId] = useState(initialDoc?.id ?? '');
-  const [activeModuleId, setActiveModuleId] = useState(initialDoc?.module ?? knowledgeModules[0]?.id ?? '');
+  const [activeModuleId, setActiveModuleId] = useState(initialModuleId);
+  const [expandedSections, setExpandedSections] = useState(
+    () => new Set(getDefaultExpandedSections(initialModule, initialDoc?.section)),
+  );
   const [query, setQuery] = useState('');
   const searchResults = useMemo(() => filterDocs(query), [query]);
+  const orderedDocIds = useMemo(() => flattenDocIds(knowledgeModules), []);
   const selectedDoc = docById.get(selectedId) ?? initialDoc;
   const activeModule =
     knowledgeModules.find((module) => module.id === activeModuleId) ?? knowledgeModules[0];
+  const adjacentDocIds = selectedDoc
+    ? getAdjacentDocIds(selectedDoc.id, orderedDocIds)
+    : { previousId: undefined, nextId: undefined };
+  const previousDoc = adjacentDocIds.previousId ? docById.get(adjacentDocIds.previousId) : undefined;
+  const nextDoc = adjacentDocIds.nextId ? docById.get(adjacentDocIds.nextId) : undefined;
 
   const selectModule = (moduleId: string) => {
     const nextModule = knowledgeModules.find((module) => module.id === moduleId);
     const firstDocId = nextModule?.sections.flatMap((section) => section.docs)[0];
+    const firstDoc = firstDocId ? docById.get(firstDocId) : undefined;
     setActiveModuleId(moduleId);
+    setExpandedSections(new Set(getDefaultExpandedSections(nextModule, firstDoc?.section)));
     if (firstDocId) {
       setSelectedId(firstDocId);
     }
   };
 
   const selectDoc = (doc: KnowledgeDoc) => {
+    const nextModule = knowledgeModules.find((module) => module.id === doc.module);
     setSelectedId(doc.id);
     setActiveModuleId(doc.module);
+    setExpandedSections((current) => {
+      if (doc.module !== activeModuleId) {
+        return new Set(getDefaultExpandedSections(nextModule, doc.section));
+      }
+
+      const next = new Set(current);
+      for (const sectionId of getDefaultExpandedSections(nextModule, doc.section)) {
+        next.add(sectionId);
+      }
+      return next;
+    });
+  };
+
+  const toggleSection = (sectionId: string) => {
+    setExpandedSections((current) => {
+      const next = new Set(current);
+      if (next.has(sectionId)) {
+        next.delete(sectionId);
+      } else {
+        next.add(sectionId);
+      }
+      return next;
+    });
   };
 
   if (!selectedDoc) {
@@ -288,24 +327,37 @@ export default function App() {
 
           {activeModule?.sections.map((section) => (
             <section className="category-group" key={section.id}>
-              <h2>{section.label}</h2>
-              <div className="doc-list">
-                {section.docs.map((docId) => {
-                  const doc = docById.get(docId);
-                  if (!doc) return null;
-                  return (
-                    <button
-                      className={doc.id === selectedDoc.id ? 'doc-button active' : 'doc-button'}
-                      key={doc.id}
-                      onClick={() => selectDoc(doc)}
-                      type="button"
-                    >
-                      <span>{doc.title}</span>
-                      <small>{doc.path}</small>
-                    </button>
-                  );
-                })}
-              </div>
+              <h2>
+                <button
+                  aria-expanded={expandedSections.has(section.id)}
+                  className="section-toggle"
+                  onClick={() => toggleSection(section.id)}
+                  type="button"
+                >
+                  <span>{section.label}</span>
+                  <span aria-hidden="true" className="section-toggle-icon">
+                    {expandedSections.has(section.id) ? '-' : '+'}
+                  </span>
+                </button>
+              </h2>
+              {expandedSections.has(section.id) ? (
+                <div className="doc-list">
+                  {section.docs.map((docId) => {
+                    const doc = docById.get(docId);
+                    if (!doc) return null;
+                    return (
+                      <button
+                        className={doc.id === selectedDoc.id ? 'doc-button active' : 'doc-button'}
+                        key={doc.id}
+                        onClick={() => selectDoc(doc)}
+                        type="button"
+                      >
+                        <span>{doc.title}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : null}
             </section>
           ))}
         </nav>
@@ -375,6 +427,32 @@ export default function App() {
             </div>
           </div>
           <div className="markdown-body">{renderMarkdown(selectedDoc.body)}</div>
+          {(previousDoc || nextDoc) ? (
+            <nav className="article-nav" aria-label="上一篇和下一篇">
+              {previousDoc ? (
+                <button className="article-nav-card previous" onClick={() => selectDoc(previousDoc)} type="button">
+                  <span>上一篇</span>
+                  <strong>{previousDoc.title}</strong>
+                  <small>
+                    {previousDoc.moduleLabel} / {previousDoc.sectionLabel}
+                  </small>
+                </button>
+              ) : (
+                <span />
+              )}
+              {nextDoc ? (
+                <button className="article-nav-card next" onClick={() => selectDoc(nextDoc)} type="button">
+                  <span>下一篇</span>
+                  <strong>{nextDoc.title}</strong>
+                  <small>
+                    {nextDoc.moduleLabel} / {nextDoc.sectionLabel}
+                  </small>
+                </button>
+              ) : (
+                <span />
+              )}
+            </nav>
+          ) : null}
         </article>
       </main>
 
