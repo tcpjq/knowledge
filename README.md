@@ -38,6 +38,22 @@ npm run dev
 npm run build
 ```
 
+### GitHub Pages 部署
+
+网页端使用 GitHub Actions 自动部署到 GitHub Pages。推送到 `main` 后，workflow 会在 `web/` 中执行构建，并发布 `web/dist`。
+
+首次使用需要在 GitHub 仓库设置中启用 Pages：
+
+1. 打开仓库 Settings。
+2. 进入 Pages。
+3. Source 选择 `GitHub Actions`。
+
+部署地址：
+
+```text
+https://tcpjq.github.io/knowledge/
+```
+
 ## 建设原则
 
 - 优先沉淀可复用的技术判断，而不是保存完整聊天记录。
