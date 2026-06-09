@@ -1,3 +1,333 @@
+import { createElement, useMemo, useState, type ReactNode } from 'react';
+import {
+  knowledgeCategories,
+  knowledgeDocs,
+  type Heading,
+  type KnowledgeDoc,
+} from './generated/knowledge-data';
+
+const docById = new Map(knowledgeDocs.map((doc) => [doc.id, doc]));
+
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function slugify(text: string) {
+  return text
+    .trim()
+    .toLowerCase()
+    .replace(/[`*_~[\]()]/g, '')
+    .replace(/[^\p{L}\p{N}\s-]/gu, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
+function inlineMarkdown(value: string) {
+  let html = escapeHtml(value);
+  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+  html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(
+    /\[([^\]]+)]\(([^)]+)\)/g,
+    '<a href="$2" target="_blank" rel="noreferrer">$1</a>',
+  );
+  return html;
+}
+
+function renderMarkdown(markdown: string) {
+  const lines = markdown.split('\n');
+  const nodes: ReactNode[] = [];
+  const usedSlugs = new Map<string, number>();
+  let index = 0;
+
+  const nextSlug = (text: string) => {
+    const base = slugify(text) || `heading-${nodes.length + 1}`;
+    const count = usedSlugs.get(base) ?? 0;
+    usedSlugs.set(base, count + 1);
+    return count === 0 ? base : `${base}-${count + 1}`;
+  };
+
+  while (index < lines.length) {
+    const line = lines[index];
+
+    if (!line.trim()) {
+      index += 1;
+      continue;
+    }
+
+    if (line.startsWith('```')) {
+      const language = line.slice(3).trim();
+      const code: string[] = [];
+      index += 1;
+      while (index < lines.length && !lines[index].startsWith('```')) {
+        code.push(lines[index]);
+        index += 1;
+      }
+      index += 1;
+      nodes.push(
+        <pre className="code-block" key={`code-${index}`}>
+          {language ? <span className="code-language">{language}</span> : null}
+          <code>{code.join('\n')}</code>
+        </pre>,
+      );
+      continue;
+    }
+
+    const heading = line.match(/^(#{1,6})\s+(.+)$/);
+    if (heading) {
+      const level = heading[1].length;
+      const text = heading[2].trim().replace(/\s+#$/, '');
+      const slug = nextSlug(text);
+      nodes.push(createElement(`h${Math.min(level, 4)}`, { id: slug, key: `heading-${index}` }, text));
+      index += 1;
+      continue;
+    }
+
+    if (line.startsWith('>')) {
+      const quote: string[] = [];
+      while (index < lines.length && lines[index].startsWith('>')) {
+        quote.push(lines[index].replace(/^>\s?/, ''));
+        index += 1;
+      }
+      nodes.push(
+        <blockquote
+          key={`quote-${index}`}
+          dangerouslySetInnerHTML={{ __html: inlineMarkdown(quote.join(' ')) }}
+        />,
+      );
+      continue;
+    }
+
+    if (/^\s*[-*]\s+/.test(line)) {
+      const items: string[] = [];
+      while (index < lines.length && /^\s*[-*]\s+/.test(lines[index])) {
+        items.push(lines[index].replace(/^\s*[-*]\s+/, ''));
+        index += 1;
+      }
+      nodes.push(
+        <ul key={`ul-${index}`}>
+          {items.map((item, itemIndex) => (
+            <li
+              dangerouslySetInnerHTML={{ __html: inlineMarkdown(item) }}
+              key={`${item}-${itemIndex}`}
+            />
+          ))}
+        </ul>,
+      );
+      continue;
+    }
+
+    if (/^\s*\d+\.\s+/.test(line)) {
+      const items: string[] = [];
+      while (index < lines.length && /^\s*\d+\.\s+/.test(lines[index])) {
+        items.push(lines[index].replace(/^\s*\d+\.\s+/, ''));
+        index += 1;
+      }
+      nodes.push(
+        <ol key={`ol-${index}`}>
+          {items.map((item, itemIndex) => (
+            <li
+              dangerouslySetInnerHTML={{ __html: inlineMarkdown(item) }}
+              key={`${item}-${itemIndex}`}
+            />
+          ))}
+        </ol>,
+      );
+      continue;
+    }
+
+    const paragraph: string[] = [];
+    while (
+      index < lines.length &&
+      lines[index].trim() &&
+      !lines[index].startsWith('```') &&
+      !/^(#{1,6})\s+/.test(lines[index]) &&
+      !lines[index].startsWith('>') &&
+      !/^\s*[-*]\s+/.test(lines[index]) &&
+      !/^\s*\d+\.\s+/.test(lines[index])
+    ) {
+      paragraph.push(lines[index]);
+      index += 1;
+    }
+    nodes.push(
+      <p
+        dangerouslySetInnerHTML={{ __html: inlineMarkdown(paragraph.join(' ')) }}
+        key={`p-${index}`}
+      />,
+    );
+  }
+
+  return nodes;
+}
+
+function filterDocs(query: string) {
+  const normalized = query.trim().toLowerCase();
+  if (!normalized) return [];
+  return knowledgeDocs.filter((doc) => doc.searchText.includes(normalized));
+}
+
+function findInitialDoc() {
+  return (
+    knowledgeDocs.find((doc) => doc.id === 'content/architecture/what-is-architecture') ??
+    knowledgeDocs[0]
+  );
+}
+
+function Metadata({ doc }: { doc: KnowledgeDoc }) {
+  return (
+    <div className="doc-meta">
+      <span>{doc.categoryLabel}</span>
+      <span>{doc.path}</span>
+      {doc.tags.map((tag) => (
+        <span className="tag" key={tag}>
+          {tag}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function Toc({ headings }: { headings: Heading[] }) {
+  const visible = headings.filter((heading) => heading.level === 2 || heading.level === 3);
+
+  if (visible.length === 0) {
+    return <p className="toc-empty">当前文档暂无章节目录。</p>;
+  }
+
+  return (
+    <nav className="toc-list" aria-label="当前文章目录">
+      {visible.map((heading) => (
+        <a className={`toc-link level-${heading.level}`} href={`#${heading.slug}`} key={heading.slug}>
+          {heading.text}
+        </a>
+      ))}
+    </nav>
+  );
+}
+
 export default function App() {
-  return <div className="app-shell">Knowledge</div>;
+  const initialDoc = findInitialDoc();
+  const [selectedId, setSelectedId] = useState(initialDoc?.id ?? '');
+  const [query, setQuery] = useState('');
+  const searchResults = useMemo(() => filterDocs(query), [query]);
+  const selectedDoc = docById.get(selectedId) ?? initialDoc;
+
+  if (!selectedDoc) {
+    return (
+      <main className="empty-state">
+        <h1>Knowledge</h1>
+        <p>当前没有可展示的知识文档。</p>
+      </main>
+    );
+  }
+
+  return (
+    <div className="app-shell">
+      <aside className="sidebar">
+        <div className="brand">
+          <span className="brand-mark">K</span>
+          <div>
+            <strong>Knowledge</strong>
+            <span>Markdown 知识库</span>
+          </div>
+        </div>
+
+        <div className="search-mobile">
+          <input
+            aria-label="搜索知识库"
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="搜索标题、正文、标签..."
+            type="search"
+            value={query}
+          />
+        </div>
+
+        <nav className="category-nav" aria-label="知识分类">
+          {knowledgeCategories.map((category) => (
+            <section className="category-group" key={category.id}>
+              <h2>{category.label}</h2>
+              <div className="doc-list">
+                {category.docs.map((docId) => {
+                  const doc = docById.get(docId);
+                  if (!doc) return null;
+                  return (
+                    <button
+                      className={doc.id === selectedDoc.id ? 'doc-button active' : 'doc-button'}
+                      key={doc.id}
+                      onClick={() => setSelectedId(doc.id)}
+                      type="button"
+                    >
+                      <span>{doc.title}</span>
+                      <small>{doc.path}</small>
+                    </button>
+                  );
+                })}
+              </div>
+            </section>
+          ))}
+        </nav>
+      </aside>
+
+      <main className="content-panel">
+        <header className="topbar">
+          <input
+            aria-label="搜索知识库"
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="搜索标题、正文、标签..."
+            type="search"
+            value={query}
+          />
+        </header>
+
+        {query.trim() ? (
+          <section className="search-results" aria-label="搜索结果">
+            <div className="section-heading">
+              <h1>搜索结果</h1>
+              <span>{searchResults.length} 条匹配</span>
+            </div>
+            {searchResults.length === 0 ? (
+              <p className="no-results">没有找到匹配内容。</p>
+            ) : (
+              <div className="result-list">
+                {searchResults.map((doc) => (
+                  <button
+                    className={doc.id === selectedDoc.id ? 'result-card active' : 'result-card'}
+                    key={doc.id}
+                    onClick={() => setSelectedId(doc.id)}
+                    type="button"
+                  >
+                    <strong>{doc.title}</strong>
+                    <span>{doc.categoryLabel}</span>
+                    <small>{doc.path}</small>
+                  </button>
+                ))}
+              </div>
+            )}
+          </section>
+        ) : null}
+
+        <article className="article">
+          <div className="article-header">
+            <h1>{selectedDoc.title}</h1>
+            <Metadata doc={selectedDoc} />
+            <div className="toc-inline">
+              <h2>本文目录</h2>
+              <Toc headings={selectedDoc.headings} />
+            </div>
+          </div>
+          <div className="markdown-body">{renderMarkdown(selectedDoc.body)}</div>
+        </article>
+      </main>
+
+      <aside className="toc-panel">
+        <h2>本文目录</h2>
+        <Toc headings={selectedDoc.headings} />
+      </aside>
+    </div>
+  );
 }
