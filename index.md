@@ -17,6 +17,10 @@
 - [工具与效率](content/tools/index.md)
 - [故障与复盘](content/incidents/index.md)
 
+## 基础知识
+
+- [什么是架构](content/architecture/what-is-architecture.md)
+
 ## 使用方式
 
 - 提问知识时，优先检索本仓库已有内容。
