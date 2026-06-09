@@ -59,8 +59,8 @@ assertEqual(
 
 assertEqual(
   getDefaultExpandedSections(modules[0], 'architecture'),
-  ['root', 'architecture'],
-  'keeps overview and current section expanded',
+  ['architecture'],
+  'keeps only the current content section expanded',
 );
 
 assertEqual(

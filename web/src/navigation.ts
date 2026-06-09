@@ -32,11 +32,10 @@ export function getDefaultExpandedSections(module: NavigationModule | undefined,
   if (!module) return [];
 
   const sectionIds = new Set<string>();
-  if (module.sections.some((section) => section.id === 'root')) {
-    sectionIds.add('root');
-  }
   if (currentSectionId && module.sections.some((section) => section.id === currentSectionId)) {
     sectionIds.add(currentSectionId);
+  } else if (module.sections.some((section) => section.id === 'root')) {
+    sectionIds.add('root');
   }
 
   return [...sectionIds];
