@@ -221,6 +221,55 @@ function stripMarkdown(markdown) {
     .trim();
 }
 
+function extractChunks(body, doc) {
+  const chunks = [];
+  const lines = body.split('\n');
+  let currentHeading = doc.title;
+  let currentLines = [];
+
+  const flush = () => {
+    const text = stripMarkdown(currentLines.join('\n'));
+    if (!text) return;
+
+    chunks.push({
+      id: `${doc.id}::${chunks.length + 1}`,
+      docId: doc.id,
+      heading: currentHeading,
+      text,
+      searchText: [doc.title, currentHeading, text].join(' ').toLowerCase(),
+    });
+    currentLines = [];
+  };
+
+  for (const line of lines) {
+    const heading = line.match(/^(#{1,3})\s+(.+)$/);
+    if (heading) {
+      flush();
+      currentHeading = heading[2].trim().replace(/\s+#$/, '');
+      continue;
+    }
+
+    currentLines.push(line);
+  }
+
+  flush();
+
+  if (chunks.length === 0) {
+    const text = stripMarkdown(body);
+    if (text) {
+      chunks.push({
+        id: `${doc.id}::1`,
+        docId: doc.id,
+        heading: doc.title,
+        text,
+        searchText: [doc.title, text].join(' ').toLowerCase(),
+      });
+    }
+  }
+
+  return chunks;
+}
+
 async function collectFiles() {
   const files = [];
 
@@ -282,6 +331,7 @@ function buildModules(docs) {
 async function main() {
   const files = await collectFiles();
   const docs = [];
+  const chunks = [];
 
   for (const relPath of files) {
     const markdown = await readFile(path.join(repoRoot, relPath), 'utf8');
@@ -302,7 +352,7 @@ async function main() {
       .join(' ')
       .toLowerCase();
 
-    docs.push({
+    const doc = {
       id,
       title,
       path: relPath,
@@ -314,7 +364,10 @@ async function main() {
       headings,
       body,
       searchText,
-    });
+    };
+
+    docs.push(doc);
+    chunks.push(...extractChunks(body, doc));
   }
 
   const modules = buildModules(docs);
@@ -351,14 +404,24 @@ export type KnowledgeModule = {
   sections: KnowledgeSection[];
 };
 
+export type KnowledgeChunk = {
+  id: string;
+  docId: string;
+  heading: string;
+  text: string;
+  searchText: string;
+};
+
 export const knowledgeDocs: KnowledgeDoc[] = ${JSON.stringify(docs, null, 2)};
 
 export const knowledgeModules: KnowledgeModule[] = ${JSON.stringify(modules, null, 2)};
+
+export const knowledgeChunks: KnowledgeChunk[] = ${JSON.stringify(chunks, null, 2)};
 `;
 
   await mkdir(path.dirname(outputPath), { recursive: true });
   await writeFile(outputPath, output, 'utf8');
-  console.log(`Generated ${docs.length} docs at ${path.relative(repoRoot, outputPath)}`);
+  console.log(`Generated ${docs.length} docs and ${chunks.length} chunks at ${path.relative(repoRoot, outputPath)}`);
 }
 
 main().catch((error) => {

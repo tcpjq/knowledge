@@ -1,11 +1,13 @@
 import { createElement, useMemo, useState, type ReactNode } from 'react';
 import {
+  knowledgeChunks,
   knowledgeDocs,
   knowledgeModules,
   type Heading,
   type KnowledgeDoc,
 } from './generated/knowledge-data';
 import { flattenDocIds, getAdjacentDocIds, getDefaultExpandedSections } from './navigation';
+import { highlightText, searchKnowledge, type HighlightPart } from './search';
 
 const docById = new Map(knowledgeDocs.map((doc) => [doc.id, doc]));
 
@@ -166,16 +168,24 @@ function renderMarkdown(markdown: string) {
   return nodes;
 }
 
-function filterDocs(query: string) {
-  const normalized = query.trim().toLowerCase();
-  if (!normalized) return [];
-  return knowledgeDocs.filter((doc) => doc.searchText.includes(normalized));
-}
-
 function findInitialDoc() {
   return (
     knowledgeDocs.find((doc) => doc.id === 'content/tech/architecture/what-is-architecture') ??
     knowledgeDocs[0]
+  );
+}
+
+function HighlightedText({ parts }: { parts: HighlightPart[] }) {
+  return (
+    <>
+      {parts.map((part, index) =>
+        part.match ? (
+          <mark key={`${part.text}-${index}`}>{part.text}</mark>
+        ) : (
+          <span key={`${part.text}-${index}`}>{part.text}</span>
+        ),
+      )}
+    </>
   );
 }
 
@@ -223,7 +233,18 @@ export default function App() {
     () => new Set(getDefaultExpandedSections(initialModule, initialDoc?.section)),
   );
   const [query, setQuery] = useState('');
-  const searchResults = useMemo(() => filterDocs(query), [query]);
+  const [searchModuleId, setSearchModuleId] = useState('all');
+  const searchResults = useMemo(
+    () =>
+      searchKnowledge({
+        query,
+        docs: knowledgeDocs,
+        chunks: knowledgeChunks,
+        modules: knowledgeModules,
+        moduleId: searchModuleId,
+      }),
+    [query, searchModuleId],
+  );
   const orderedDocIds = useMemo(() => flattenDocIds(knowledgeModules), []);
   const selectedDoc = docById.get(selectedId) ?? initialDoc;
   const activeModule =
@@ -394,22 +415,47 @@ export default function App() {
               <h1>搜索结果</h1>
               <span>{searchResults.length} 条匹配</span>
             </div>
+            <div className="search-controls" aria-label="搜索范围">
+              <span>范围</span>
+              <button
+                className={searchModuleId === 'all' ? 'filter-chip active' : 'filter-chip'}
+                onClick={() => setSearchModuleId('all')}
+                type="button"
+              >
+                全部
+              </button>
+              {knowledgeModules.map((module) => (
+                <button
+                  className={searchModuleId === module.id ? 'filter-chip active' : 'filter-chip'}
+                  key={module.id}
+                  onClick={() => setSearchModuleId(module.id)}
+                  type="button"
+                >
+                  {module.label}
+                </button>
+              ))}
+            </div>
             {searchResults.length === 0 ? (
               <p className="no-results">没有找到匹配内容。</p>
             ) : (
               <div className="result-list">
-                {searchResults.map((doc) => (
+                {searchResults.map((result) => (
                   <button
-                    className={doc.id === selectedDoc.id ? 'result-card active' : 'result-card'}
-                    key={doc.id}
-                    onClick={() => selectDoc(doc)}
+                    className={result.doc.id === selectedDoc.id ? 'result-card active' : 'result-card'}
+                    key={result.doc.id}
+                    onClick={() => selectDoc(result.doc)}
                     type="button"
                   >
-                    <strong>{doc.title}</strong>
+                    <strong>
+                      <HighlightedText parts={highlightText(result.doc.title, query)} />
+                    </strong>
                     <span>
-                      {doc.moduleLabel} / {doc.sectionLabel}
+                      {result.doc.moduleLabel} / {result.doc.sectionLabel}
+                      {result.chunk ? ` / ${result.chunk.heading}` : ''}
                     </span>
-                    <small>{doc.path}</small>
+                    <small>
+                      <HighlightedText parts={highlightText(result.snippet, query)} />
+                    </small>
                   </button>
                 ))}
               </div>

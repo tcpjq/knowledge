@@ -31,6 +31,14 @@ export type KnowledgeModule = {
   sections: KnowledgeSection[];
 };
 
+export type KnowledgeChunk = {
+  id: string;
+  docId: string;
+  heading: string;
+  text: string;
+  searchText: string;
+};
+
 export const knowledgeDocs: KnowledgeDoc[] = [
   {
     "id": "content/communication/index",
@@ -602,5 +610,365 @@ export const knowledgeModules: KnowledgeModule[] = [
         ]
       }
     ]
+  }
+];
+
+export const knowledgeChunks: KnowledgeChunk[] = [
+  {
+    "id": "content/communication/index::1",
+    "docId": "content/communication/index",
+    "heading": "沟通",
+    "text": "沟通模块用于沉淀表达、写作、会议、反馈、谈判、协作和关系处理。",
+    "searchText": "沟通 沟通 沟通模块用于沉淀表达、写作、会议、反馈、谈判、协作和关系处理。"
+  },
+  {
+    "id": "content/communication/index::2",
+    "docId": "content/communication/index",
+    "heading": "章节",
+    "text": "暂无。",
+    "searchText": "沟通 章节 暂无。"
+  },
+  {
+    "id": "content/tech/ai/index::1",
+    "docId": "content/tech/ai/index",
+    "heading": "AI",
+    "text": "AI 工程、Prompt、RAG、Agent、模型评估、上下文管理和 AI 应用架构。",
+    "searchText": "ai ai ai 工程、prompt、rag、agent、模型评估、上下文管理和 ai 应用架构。"
+  },
+  {
+    "id": "content/tech/ai/index::2",
+    "docId": "content/tech/ai/index",
+    "heading": "章节",
+    "text": "暂无。",
+    "searchText": "ai 章节 暂无。"
+  },
+  {
+    "id": "content/tech/architecture/index::1",
+    "docId": "content/tech/architecture/index",
+    "heading": "架构与系统设计",
+    "text": "系统设计、架构取舍、模块边界、可靠性、可扩展性和演进路径。",
+    "searchText": "架构与系统设计 架构与系统设计 系统设计、架构取舍、模块边界、可靠性、可扩展性和演进路径。"
+  },
+  {
+    "id": "content/tech/architecture/index::2",
+    "docId": "content/tech/architecture/index",
+    "heading": "章节",
+    "text": "- 什么是架构",
+    "searchText": "架构与系统设计 章节 - 什么是架构"
+  },
+  {
+    "id": "content/tech/architecture/what-is-architecture::1",
+    "docId": "content/tech/architecture/what-is-architecture",
+    "heading": "核心结论",
+    "text": "架构是在约束下组织系统的方式。 它不是画几张图，也不是用了微服务、消息队列、Redis、Kubernetes 就叫有架构。架构真正关心的是：系统如何拆分、模块如何协作、数据如何流动、状态放在哪里、出错时怎么处理，以及未来变化时哪里容易改、哪里会很痛。 一句话总结： 架构是把业务需求、技术约束、团队能力和未来变化组织成一个可运行、可维护、可演进的系统结构。",
+    "searchText": "什么是架构 核心结论 架构是在约束下组织系统的方式。 它不是画几张图，也不是用了微服务、消息队列、redis、kubernetes 就叫有架构。架构真正关心的是：系统如何拆分、模块如何协作、数据如何流动、状态放在哪里、出错时怎么处理，以及未来变化时哪里容易改、哪里会很痛。 一句话总结： 架构是把业务需求、技术约束、团队能力和未来变化组织成一个可运行、可维护、可演进的系统结构。"
+  },
+  {
+    "id": "content/tech/architecture/what-is-architecture::2",
+    "docId": "content/tech/architecture/what-is-architecture",
+    "heading": "背景",
+    "text": "在 AI 时代，AI 会越来越擅长生成代码，但人仍然需要判断： - 该写什么？ - 系统应该如何组织？ - 当前复杂度是否值得？ - 出问题时如何定位和恢复？ - 未来需求变化时，哪些地方会成为阻力？ 所以架构能力不是“选择高级技术”，而是做合理取舍。",
+    "searchText": "什么是架构 背景 在 ai 时代，ai 会越来越擅长生成代码，但人仍然需要判断： - 该写什么？ - 系统应该如何组织？ - 当前复杂度是否值得？ - 出问题时如何定位和恢复？ - 未来需求变化时，哪些地方会成为阻力？ 所以架构能力不是“选择高级技术”，而是做合理取舍。"
+  },
+  {
+    "id": "content/tech/architecture/what-is-architecture::3",
+    "docId": "content/tech/architecture/what-is-architecture",
+    "heading": "内容",
+    "text": "架构主要关注四件事。",
+    "searchText": "什么是架构 内容 架构主要关注四件事。"
+  },
+  {
+    "id": "content/tech/architecture/what-is-architecture::4",
+    "docId": "content/tech/architecture/what-is-architecture",
+    "heading": "边界",
+    "text": "边界回答：系统分成哪些模块，什么归谁管。 典型问题： - 哪些能力应该放在同一个模块？ - 哪些能力应该拆开？ - 模块之间是否有清晰职责？ - 一个模块是否承担了太多事情？",
+    "searchText": "什么是架构 边界 边界回答：系统分成哪些模块，什么归谁管。 典型问题： - 哪些能力应该放在同一个模块？ - 哪些能力应该拆开？ - 模块之间是否有清晰职责？ - 一个模块是否承担了太多事情？"
+  },
+  {
+    "id": "content/tech/architecture/what-is-architecture::5",
+    "docId": "content/tech/architecture/what-is-architecture",
+    "heading": "关系",
+    "text": "关系回答：模块之间怎么通信，谁依赖谁。 典型问题： - 是直接调用，还是通过事件、队列、消息？ - 依赖方向是否清晰？ - 一个模块变化是否会影响很多地方？ - 是否存在循环依赖？",
+    "searchText": "什么是架构 关系 关系回答：模块之间怎么通信，谁依赖谁。 典型问题： - 是直接调用，还是通过事件、队列、消息？ - 依赖方向是否清晰？ - 一个模块变化是否会影响很多地方？ - 是否存在循环依赖？"
+  },
+  {
+    "id": "content/tech/architecture/what-is-architecture::6",
+    "docId": "content/tech/architecture/what-is-architecture",
+    "heading": "数据",
+    "text": "数据回答：数据怎么存、怎么流、怎么保持一致。 典型问题： - 数据源头在哪里？ - 状态应该放在客户端、服务端、数据库还是缓存？ - 数据更新后，其他模块如何感知？ - 是否需要强一致，还是最终一致就够？",
+    "searchText": "什么是架构 数据 数据回答：数据怎么存、怎么流、怎么保持一致。 典型问题： - 数据源头在哪里？ - 状态应该放在客户端、服务端、数据库还是缓存？ - 数据更新后，其他模块如何感知？ - 是否需要强一致，还是最终一致就够？"
+  },
+  {
+    "id": "content/tech/architecture/what-is-architecture::7",
+    "docId": "content/tech/architecture/what-is-architecture",
+    "heading": "取舍",
+    "text": "取舍回答：为了性能、成本、维护性、扩展性，牺牲了什么。 典型问题： - 当前阶段需要这个复杂度吗？ - 简单方案能撑多久？ - 引入新组件会增加多少维护成本？ - 这个设计未来最难改的地方是什么？",
+    "searchText": "什么是架构 取舍 取舍回答：为了性能、成本、维护性、扩展性，牺牲了什么。 典型问题： - 当前阶段需要这个复杂度吗？ - 简单方案能撑多久？ - 引入新组件会增加多少维护成本？ - 这个设计未来最难改的地方是什么？"
+  },
+  {
+    "id": "content/tech/architecture/what-is-architecture::8",
+    "docId": "content/tech/architecture/what-is-architecture",
+    "heading": "例子",
+    "text": "假设要做一个知识库系统。 最简单的实现可以是： 这在早期可能完全够用。 但开始考虑下面这些问题时，就进入了架构设计： - 内容如何分类？ - 使用 Markdown 文件还是数据库？ - 是否需要全文搜索？ - 是否需要 AI 检索？ - 搜索索引用什么生成？ - 内容更新后如何同步索引？ - 未来要不要做网页目录？ 不同方案有不同取舍。",
+    "searchText": "什么是架构 例子 假设要做一个知识库系统。 最简单的实现可以是： 这在早期可能完全够用。 但开始考虑下面这些问题时，就进入了架构设计： - 内容如何分类？ - 使用 markdown 文件还是数据库？ - 是否需要全文搜索？ - 是否需要 ai 检索？ - 搜索索引用什么生成？ - 内容更新后如何同步索引？ - 未来要不要做网页目录？ 不同方案有不同取舍。"
+  },
+  {
+    "id": "content/tech/architecture/what-is-architecture::9",
+    "docId": "content/tech/architecture/what-is-architecture",
+    "heading": "Markdown 文件",
+    "text": "优点： - 简单。 - 可读。 - Git 友好。 - 适合个人知识库。 缺点： - 复杂查询能力弱。 - 多人协作时可能出现冲突。",
+    "searchText": "什么是架构 markdown 文件 优点： - 简单。 - 可读。 - git 友好。 - 适合个人知识库。 缺点： - 复杂查询能力弱。 - 多人协作时可能出现冲突。"
+  },
+  {
+    "id": "content/tech/architecture/what-is-architecture::10",
+    "docId": "content/tech/architecture/what-is-architecture",
+    "heading": "数据库",
+    "text": "优点： - 查询能力强。 - 适合动态系统。 - 适合复杂权限、状态和多用户协作。 缺点： - 维护成本更高。 - 不如 Markdown 直观。 - 和 Git 的结合较弱。",
+    "searchText": "什么是架构 数据库 优点： - 查询能力强。 - 适合动态系统。 - 适合复杂权限、状态和多用户协作。 缺点： - 维护成本更高。 - 不如 markdown 直观。 - 和 git 的结合较弱。"
+  },
+  {
+    "id": "content/tech/architecture/what-is-architecture::11",
+    "docId": "content/tech/architecture/what-is-architecture",
+    "heading": "向量数据库",
+    "text": "优点： - 适合语义搜索。 - 适合 RAG 场景。 缺点： - 引入额外复杂度。 - 需要考虑切分、嵌入、更新、评估。 - 早期可能是过度设计。",
+    "searchText": "什么是架构 向量数据库 优点： - 适合语义搜索。 - 适合 rag 场景。 缺点： - 引入额外复杂度。 - 需要考虑切分、嵌入、更新、评估。 - 早期可能是过度设计。"
+  },
+  {
+    "id": "content/tech/architecture/what-is-architecture::12",
+    "docId": "content/tech/architecture/what-is-architecture",
+    "heading": "判断标准",
+    "text": "判断一个架构好不好，不是看它高级不高级，而是看它是否匹配当前阶段。 小项目更需要： - 简单。 - 清晰。 - 容易修改。 增长期系统更需要： - 边界清楚。 - 数据一致。 - 可观测。 - 可扩展。 生产系统必须考虑： - 可靠性。 - 降级。 - 回滚。 - 监控。 - 故障恢复。",
+    "searchText": "什么是架构 判断标准 判断一个架构好不好，不是看它高级不高级，而是看它是否匹配当前阶段。 小项目更需要： - 简单。 - 清晰。 - 容易修改。 增长期系统更需要： - 边界清楚。 - 数据一致。 - 可观测。 - 可扩展。 生产系统必须考虑： - 可靠性。 - 降级。 - 回滚。 - 监控。 - 故障恢复。"
+  },
+  {
+    "id": "content/tech/architecture/what-is-architecture::13",
+    "docId": "content/tech/architecture/what-is-architecture",
+    "heading": "关联",
+    "text": "- 架构与系统设计 - AI 时代技术能力地图",
+    "searchText": "什么是架构 关联 - 架构与系统设计 - ai 时代技术能力地图"
+  },
+  {
+    "id": "content/tech/backend/index::1",
+    "docId": "content/tech/backend/index",
+    "heading": "后端",
+    "text": "API、服务、认证授权、队列、后台任务、服务边界和集成模式。",
+    "searchText": "后端 后端 api、服务、认证授权、队列、后台任务、服务边界和集成模式。"
+  },
+  {
+    "id": "content/tech/backend/index::2",
+    "docId": "content/tech/backend/index",
+    "heading": "章节",
+    "text": "暂无。",
+    "searchText": "后端 章节 暂无。"
+  },
+  {
+    "id": "content/tech/database/index::1",
+    "docId": "content/tech/database/index",
+    "heading": "数据库与存储",
+    "text": "数据库、事务、索引、缓存、数据建模、查询优化和一致性。",
+    "searchText": "数据库与存储 数据库与存储 数据库、事务、索引、缓存、数据建模、查询优化和一致性。"
+  },
+  {
+    "id": "content/tech/database/index::2",
+    "docId": "content/tech/database/index",
+    "heading": "章节",
+    "text": "暂无。",
+    "searchText": "数据库与存储 章节 暂无。"
+  },
+  {
+    "id": "content/tech/engineering/index::1",
+    "docId": "content/tech/engineering/index",
+    "heading": "工程实践",
+    "text": "测试、调试、代码审查、重构、可维护性、可观测性和交付质量。",
+    "searchText": "工程实践 工程实践 测试、调试、代码审查、重构、可维护性、可观测性和交付质量。"
+  },
+  {
+    "id": "content/tech/engineering/index::2",
+    "docId": "content/tech/engineering/index",
+    "heading": "章节",
+    "text": "暂无。",
+    "searchText": "工程实践 章节 暂无。"
+  },
+  {
+    "id": "content/tech/frontend/index::1",
+    "docId": "content/tech/frontend/index",
+    "heading": "前端",
+    "text": "浏览器、UI 工程、前端架构、状态管理、渲染、可访问性和性能。",
+    "searchText": "前端 前端 浏览器、ui 工程、前端架构、状态管理、渲染、可访问性和性能。"
+  },
+  {
+    "id": "content/tech/frontend/index::2",
+    "docId": "content/tech/frontend/index",
+    "heading": "章节",
+    "text": "暂无。",
+    "searchText": "前端 章节 暂无。"
+  },
+  {
+    "id": "content/tech/incidents/index::1",
+    "docId": "content/tech/incidents/index",
+    "heading": "故障与复盘",
+    "text": "Bug、故障、排查记录、复盘、性能问题和从失败中沉淀的预防经验。",
+    "searchText": "故障与复盘 故障与复盘 bug、故障、排查记录、复盘、性能问题和从失败中沉淀的预防经验。"
+  },
+  {
+    "id": "content/tech/incidents/index::2",
+    "docId": "content/tech/incidents/index",
+    "heading": "章节",
+    "text": "暂无。",
+    "searchText": "故障与复盘 章节 暂无。"
+  },
+  {
+    "id": "content/tech/index::1",
+    "docId": "content/tech/index",
+    "heading": "技术",
+    "text": "技术模块用于沉淀 AI 工程、架构与系统设计、工程实践、数据库、前端、后端、工具效率和故障复盘。",
+    "searchText": "技术 技术 技术模块用于沉淀 ai 工程、架构与系统设计、工程实践、数据库、前端、后端、工具效率和故障复盘。"
+  },
+  {
+    "id": "content/tech/index::2",
+    "docId": "content/tech/index",
+    "heading": "章节",
+    "text": "- AI - 架构与系统设计 - 工程实践 - 数据库与存储 - 前端 - 后端 - 工具与效率 - 故障与复盘",
+    "searchText": "技术 章节 - ai - 架构与系统设计 - 工程实践 - 数据库与存储 - 前端 - 后端 - 工具与效率 - 故障与复盘"
+  },
+  {
+    "id": "content/tech/tools/index::1",
+    "docId": "content/tech/tools/index",
+    "heading": "工具与效率",
+    "text": "开发工具、Git、CI/CD、编辑器工作流、命令行效率、自动化和本地开发环境。",
+    "searchText": "工具与效率 工具与效率 开发工具、git、ci/cd、编辑器工作流、命令行效率、自动化和本地开发环境。"
+  },
+  {
+    "id": "content/tech/tools/index::2",
+    "docId": "content/tech/tools/index",
+    "heading": "章节",
+    "text": "暂无。",
+    "searchText": "工具与效率 章节 暂无。"
+  },
+  {
+    "id": "content/travel/index::1",
+    "docId": "content/travel/index",
+    "heading": "旅游",
+    "text": "旅游模块用于沉淀目的地、攻略、预算、行程、签证、酒店和旅行复盘。",
+    "searchText": "旅游 旅游 旅游模块用于沉淀目的地、攻略、预算、行程、签证、酒店和旅行复盘。"
+  },
+  {
+    "id": "content/travel/index::2",
+    "docId": "content/travel/index",
+    "heading": "章节",
+    "text": "暂无。",
+    "searchText": "旅游 章节 暂无。"
+  },
+  {
+    "id": "topics/ai-era-technical-capability-map::1",
+    "docId": "topics/ai-era-technical-capability-map",
+    "heading": "定位",
+    "text": "这个文档用于指导后续技术能力提升和知识库建设。 AI 时代仍然需要懂技术，但重点不再是记住 API 或框架细节，而是能够判断问题、设计系统、审查 AI 产出的代码，并把技术方案落到真实业务约束里。 核心目标： - 能判断一个技术方案是否合理。 - 能把模糊需求拆成清晰模型。 - 能设计可维护、可演进的系统。 - 能把 AI 接入真实工程流程。 - 能审查、调试和改进 AI 生成的代码。",
+    "searchText": "ai 时代技术能力地图 定位 这个文档用于指导后续技术能力提升和知识库建设。 ai 时代仍然需要懂技术，但重点不再是记住 api 或框架细节，而是能够判断问题、设计系统、审查 ai 产出的代码，并把技术方案落到真实业务约束里。 核心目标： - 能判断一个技术方案是否合理。 - 能把模糊需求拆成清晰模型。 - 能设计可维护、可演进的系统。 - 能把 ai 接入真实工程流程。 - 能审查、调试和改进 ai 生成的代码。"
+  },
+  {
+    "id": "topics/ai-era-technical-capability-map::2",
+    "docId": "topics/ai-era-technical-capability-map",
+    "heading": "1. 基础工程能力",
+    "text": "基础工程能力是所有技术判断的底座。AI 可以辅助写代码，但人需要知道什么是正确、稳定、可维护的实现。 需要持续积累： - 数据结构与算法：复杂度、常见数据结构、基本算法思想。 - 网络：HTTP、DNS、TCP、TLS、WebSocket、缓存、代理。 - 数据库：索引、事务、锁、隔离级别、查询优化、数据建模。 - 操作系统：进程、线程、内存、文件系统、IO、并发。 - 工程工具：Git、CI/CD、测试、日志、监控、部署、回滚。 沉淀方式： - 每个概念写成一篇原子笔记。 - 每篇笔记回答：是什么、为什么需要、常见误区、实际例子。 - 遇到 bug 时反向补充对应底层知识。",
+    "searchText": "ai 时代技术能力地图 1. 基础工程能力 基础工程能力是所有技术判断的底座。ai 可以辅助写代码，但人需要知道什么是正确、稳定、可维护的实现。 需要持续积累： - 数据结构与算法：复杂度、常见数据结构、基本算法思想。 - 网络：http、dns、tcp、tls、websocket、缓存、代理。 - 数据库：索引、事务、锁、隔离级别、查询优化、数据建模。 - 操作系统：进程、线程、内存、文件系统、io、并发。 - 工程工具：git、ci/cd、测试、日志、监控、部署、回滚。 沉淀方式： - 每个概念写成一篇原子笔记。 - 每篇笔记回答：是什么、为什么需要、常见误区、实际例子。 - 遇到 bug 时反向补充对应底层知识。"
+  },
+  {
+    "id": "topics/ai-era-technical-capability-map::3",
+    "docId": "topics/ai-era-technical-capability-map",
+    "heading": "2. 架构与方案设计",
+    "text": "架构能力是 AI 时代最值得重点提升的能力之一。AI 可以给出很多方案，但方案是否适合当前阶段，需要人来判断。 需要持续训练的问题： - 系统边界怎么划分？ - 核心模块有哪些？ - 数据流怎么走？ - 状态应该放在哪里？ - 同步还是异步？ - 单体、模块化单体、微服务分别适合什么场景？ - 如何保证可扩展、可观测、可回滚？ - 出问题时如何降级？ - 哪些设计是当前需要，哪些是过早复杂化？ 沉淀方式： - 保存典型系统设计：登录、权限、支付、订单、搜索、知识库、消息系统。 - 每个方案记录约束、取舍、风险和替代方案。 - 不只保存最终方案，也保存为什么没有选择其他方案。",
+    "searchText": "ai 时代技术能力地图 2. 架构与方案设计 架构能力是 ai 时代最值得重点提升的能力之一。ai 可以给出很多方案，但方案是否适合当前阶段，需要人来判断。 需要持续训练的问题： - 系统边界怎么划分？ - 核心模块有哪些？ - 数据流怎么走？ - 状态应该放在哪里？ - 同步还是异步？ - 单体、模块化单体、微服务分别适合什么场景？ - 如何保证可扩展、可观测、可回滚？ - 出问题时如何降级？ - 哪些设计是当前需要，哪些是过早复杂化？ 沉淀方式： - 保存典型系统设计：登录、权限、支付、订单、搜索、知识库、消息系统。 - 每个方案记录约束、取舍、风险和替代方案。 - 不只保存最终方案，也保存为什么没有选择其他方案。"
+  },
+  {
+    "id": "topics/ai-era-technical-capability-map::4",
+    "docId": "topics/ai-era-technical-capability-map",
+    "heading": "3. 需求抽象与建模能力",
+    "text": "需求抽象能力决定了技术实现是否真正解决问题。很多系统复杂，不是因为代码难，而是因为一开始没有把对象、关系和流程想清楚。 需要持续训练： - 核心用户是谁？ - 真实业务对象有哪些？ - 对象之间是什么关系？ - 哪些状态需要持久化？ - 哪些流程有异常分支？ - 哪些约束来自业务，哪些约束来自技术？ - 当前必须做什么，哪些可以延后？ 例子： 做一个知识库，不应该一开始就决定是否使用向量数据库，而是先判断： - 知识的最小单元是什么？ - 知识如何被引用？ - 知识如何更新？ - 如何避免重复？ - 如何让 AI 容易读取和检索？ 沉淀方式： - 为每个项目建立“需求建模”文档。 - 用实体、状态、流程、异常、约束来组织内容。 - 把模糊需求转成清晰问题清单。",
+    "searchText": "ai 时代技术能力地图 3. 需求抽象与建模能力 需求抽象能力决定了技术实现是否真正解决问题。很多系统复杂，不是因为代码难，而是因为一开始没有把对象、关系和流程想清楚。 需要持续训练： - 核心用户是谁？ - 真实业务对象有哪些？ - 对象之间是什么关系？ - 哪些状态需要持久化？ - 哪些流程有异常分支？ - 哪些约束来自业务，哪些约束来自技术？ - 当前必须做什么，哪些可以延后？ 例子： 做一个知识库，不应该一开始就决定是否使用向量数据库，而是先判断： - 知识的最小单元是什么？ - 知识如何被引用？ - 知识如何更新？ - 如何避免重复？ - 如何让 ai 容易读取和检索？ 沉淀方式： - 为每个项目建立“需求建模”文档。 - 用实体、状态、流程、异常、约束来组织内容。 - 把模糊需求转成清晰问题清单。"
+  },
+  {
+    "id": "topics/ai-era-technical-capability-map::5",
+    "docId": "topics/ai-era-technical-capability-map",
+    "heading": "4. AI 工程能力",
+    "text": "AI 工程能力不是只会写 prompt，而是能把模型接入真实系统，并管理上下文、工具、数据、安全和评估。 需要持续积累： - Prompt 设计：角色、任务、约束、示例、输出格式。 - 上下文管理：信息选择、压缩、记忆、引用、窗口限制。 - RAG：切分、嵌入、检索、重排、引用、更新。 - Agent：工具调用、状态管理、任务拆解、失败恢复。 - 模型选择：能力、成本、延迟、上下文长度、稳定性。 - 评估：如何判断 AI 输出是否稳定、正确、可复现。 - 安全：权限控制、提示注入、数据泄漏、幻觉控制。 沉淀方式： - 保存可复用 prompt。 - 记录 AI 工作流设计。 - 记录失败案例：模型为什么答错、上下文哪里不够、评估哪里缺失。 - 建立 AI 输出审查清单。",
+    "searchText": "ai 时代技术能力地图 4. ai 工程能力 ai 工程能力不是只会写 prompt，而是能把模型接入真实系统，并管理上下文、工具、数据、安全和评估。 需要持续积累： - prompt 设计：角色、任务、约束、示例、输出格式。 - 上下文管理：信息选择、压缩、记忆、引用、窗口限制。 - rag：切分、嵌入、检索、重排、引用、更新。 - agent：工具调用、状态管理、任务拆解、失败恢复。 - 模型选择：能力、成本、延迟、上下文长度、稳定性。 - 评估：如何判断 ai 输出是否稳定、正确、可复现。 - 安全：权限控制、提示注入、数据泄漏、幻觉控制。 沉淀方式： - 保存可复用 prompt。 - 记录 ai 工作流设计。 - 记录失败案例：模型为什么答错、上下文哪里不够、评估哪里缺失。 - 建立 ai 输出审查清单。"
+  },
+  {
+    "id": "topics/ai-era-technical-capability-map::6",
+    "docId": "topics/ai-era-technical-capability-map",
+    "heading": "5. 代码审查与调试能力",
+    "text": "AI 会显著提高代码产量，因此代码审查和调试能力会更重要。 需要重点判断： - 代码是否只在局部正确，但整体有风险？ - 错误处理是否完整？ - 类型设计是否表达了真实约束？ - 状态是否清晰？ - 并发、缓存、事务是否存在隐患？ - 测试是否覆盖关键路径？ - 抽象是否过早？ - 代码是否容易被后续维护？ 沉淀方式： - 保存代码审查清单。 - 记录典型 bug 的定位过程。 - 把每次修复沉淀为：现象、原因、验证、修复、预防。 - 对 AI 生成代码单独记录常见问题。",
+    "searchText": "ai 时代技术能力地图 5. 代码审查与调试能力 ai 会显著提高代码产量，因此代码审查和调试能力会更重要。 需要重点判断： - 代码是否只在局部正确，但整体有风险？ - 错误处理是否完整？ - 类型设计是否表达了真实约束？ - 状态是否清晰？ - 并发、缓存、事务是否存在隐患？ - 测试是否覆盖关键路径？ - 抽象是否过早？ - 代码是否容易被后续维护？ 沉淀方式： - 保存代码审查清单。 - 记录典型 bug 的定位过程。 - 把每次修复沉淀为：现象、原因、验证、修复、预防。 - 对 ai 生成代码单独记录常见问题。"
+  },
+  {
+    "id": "topics/ai-era-technical-capability-map::7",
+    "docId": "topics/ai-era-technical-capability-map",
+    "heading": "6. 产品与业务技术判断",
+    "text": "高级技术能力不是把系统做复杂，而是知道什么时候不需要复杂技术。 需要持续训练： - 技术方案是否匹配业务阶段？ - 当前最小可用方案是什么？ - 哪些复杂度是真需求，哪些是想象出来的？ - 交付速度和长期维护如何平衡？ - 自动化是否值得？ - 成本、稳定性、体验之间如何取舍？ 沉淀方式： - 记录技术决策。 - 每个决策写清楚背景、选项、取舍、风险、复盘。 - 建立“什么时候不用某项技术”的反向笔记。",
+    "searchText": "ai 时代技术能力地图 6. 产品与业务技术判断 高级技术能力不是把系统做复杂，而是知道什么时候不需要复杂技术。 需要持续训练： - 技术方案是否匹配业务阶段？ - 当前最小可用方案是什么？ - 哪些复杂度是真需求，哪些是想象出来的？ - 交付速度和长期维护如何平衡？ - 自动化是否值得？ - 成本、稳定性、体验之间如何取舍？ 沉淀方式： - 记录技术决策。 - 每个决策写清楚背景、选项、取舍、风险、复盘。 - 建立“什么时候不用某项技术”的反向笔记。"
+  },
+  {
+    "id": "topics/ai-era-technical-capability-map::8",
+    "docId": "topics/ai-era-technical-capability-map",
+    "heading": "知识库建设方向",
+    "text": "后续知识库可以围绕以下类型沉淀。",
+    "searchText": "ai 时代技术能力地图 知识库建设方向 后续知识库可以围绕以下类型沉淀。"
+  },
+  {
+    "id": "topics/ai-era-technical-capability-map::9",
+    "docId": "topics/ai-era-technical-capability-map",
+    "heading": "技术概念",
+    "text": "用于记录基础知识。 例子： - 什么是事务？ - 什么是数据库索引？ - 什么是消息队列？ - HTTP 缓存如何工作？",
+    "searchText": "ai 时代技术能力地图 技术概念 用于记录基础知识。 例子： - 什么是事务？ - 什么是数据库索引？ - 什么是消息队列？ - http 缓存如何工作？"
+  },
+  {
+    "id": "topics/ai-era-technical-capability-map::10",
+    "docId": "topics/ai-era-technical-capability-map",
+    "heading": "方案模式",
+    "text": "用于记录常见系统设计。 例子： - 登录系统怎么设计？ - 权限系统怎么设计？ - 支付系统怎么设计？ - 知识库系统怎么设计？ - RAG 系统怎么设计？",
+    "searchText": "ai 时代技术能力地图 方案模式 用于记录常见系统设计。 例子： - 登录系统怎么设计？ - 权限系统怎么设计？ - 支付系统怎么设计？ - 知识库系统怎么设计？ - rag 系统怎么设计？"
+  },
+  {
+    "id": "topics/ai-era-technical-capability-map::11",
+    "docId": "topics/ai-era-technical-capability-map",
+    "heading": "架构决策",
+    "text": "用于记录具体选择背后的判断。 例子： - 为什么选择模块化单体而不是微服务？ - 为什么先不用向量数据库？ - 为什么使用异步队列？ - 为什么某个字段需要冗余？",
+    "searchText": "ai 时代技术能力地图 架构决策 用于记录具体选择背后的判断。 例子： - 为什么选择模块化单体而不是微服务？ - 为什么先不用向量数据库？ - 为什么使用异步队列？ - 为什么某个字段需要冗余？"
+  },
+  {
+    "id": "topics/ai-era-technical-capability-map::12",
+    "docId": "topics/ai-era-technical-capability-map",
+    "heading": "故障案例",
+    "text": "用于记录真实问题和排查过程。 推荐结构： - 现象 - 影响范围 - 排查过程 - 根因 - 修复方式 - 如何预防",
+    "searchText": "ai 时代技术能力地图 故障案例 用于记录真实问题和排查过程。 推荐结构： - 现象 - 影响范围 - 排查过程 - 根因 - 修复方式 - 如何预防"
+  },
+  {
+    "id": "topics/ai-era-technical-capability-map::13",
+    "docId": "topics/ai-era-technical-capability-map",
+    "heading": "AI 工程",
+    "text": "用于记录和 AI 相关的工程经验。 例子： - Prompt 模板 - RAG 切分策略 - Agent 工具调用模式 - AI 代码审查清单 - 模型评估方法",
+    "searchText": "ai 时代技术能力地图 ai 工程 用于记录和 ai 相关的工程经验。 例子： - prompt 模板 - rag 切分策略 - agent 工具调用模式 - ai 代码审查清单 - 模型评估方法"
+  },
+  {
+    "id": "topics/ai-era-technical-capability-map::14",
+    "docId": "topics/ai-era-technical-capability-map",
+    "heading": "代码实践",
+    "text": "用于记录日常工程质量方法。 例子： - 测试策略 - 重构方法 - 类型设计 - 错误处理 - 日志与监控 - Code review checklist",
+    "searchText": "ai 时代技术能力地图 代码实践 用于记录日常工程质量方法。 例子： - 测试策略 - 重构方法 - 类型设计 - 错误处理 - 日志与监控 - code review checklist"
+  },
+  {
+    "id": "topics/ai-era-technical-capability-map::15",
+    "docId": "topics/ai-era-technical-capability-map",
+    "heading": "推荐学习主线",
+    "text": "优先级建议： 1. 基础工程能力 2. 一条主技术栈 3. 系统设计 4. AI 工程 5. 架构决策 6. 代码审查与调试 7. 产品与业务技术判断 如果只能优先选择三个方向： - 系统设计 - AI 工程 - 调试与代码审查 原因是：AI 会越来越擅长生成代码，但人仍然要负责判断该写什么、如何组织系统、出了问题如何定位和修复。",
+    "searchText": "ai 时代技术能力地图 推荐学习主线 优先级建议： 1. 基础工程能力 2. 一条主技术栈 3. 系统设计 4. ai 工程 5. 架构决策 6. 代码审查与调试 7. 产品与业务技术判断 如果只能优先选择三个方向： - 系统设计 - ai 工程 - 调试与代码审查 原因是：ai 会越来越擅长生成代码，但人仍然要负责判断该写什么、如何组织系统、出了问题如何定位和修复。"
+  },
+  {
+    "id": "topics/ai-era-technical-capability-map::16",
+    "docId": "topics/ai-era-technical-capability-map",
+    "heading": "后续使用方式",
+    "text": "每次和 AI 聊到有价值的技术内容时，优先判断它属于哪一类： - 概念 - 方案 - 决策 - 故障 - AI 工程 - 代码实践 然后把内容沉淀成独立 Markdown 笔记，并在相关主题文档中建立链接。 长期目标不是保存所有聊天记录，而是把聊天提炼成可以复用、可以检索、可以持续更新的技术判断体系。",
+    "searchText": "ai 时代技术能力地图 后续使用方式 每次和 ai 聊到有价值的技术内容时，优先判断它属于哪一类： - 概念 - 方案 - 决策 - 故障 - ai 工程 - 代码实践 然后把内容沉淀成独立 markdown 笔记，并在相关主题文档中建立链接。 长期目标不是保存所有聊天记录，而是把聊天提炼成可以复用、可以检索、可以持续更新的技术判断体系。"
   }
 ];
