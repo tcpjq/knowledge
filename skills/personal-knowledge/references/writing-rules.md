@@ -28,7 +28,8 @@
 ```yaml
 ---
 title:
-category:
+module:
+section:
 tags: []
 created:
 updated:
@@ -56,6 +57,7 @@ status: draft
 
 新增笔记时：
 
-1. 添加到对应分类的 `index.md`。
-2. 只有基础或高频知识才添加到根目录 `index.md`。
-3. 索引保持简短、可扫描。
+1. 添加到对应章节的 `index.md`。
+2. 必要时添加到对应模块的 `index.md`。
+3. 只有基础或高频知识才添加到根目录 `index.md`。
+4. 索引保持简短、可扫描。

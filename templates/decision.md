@@ -1,6 +1,7 @@
 ---
 title:
-category:
+module:
+section:
 tags: []
 created:
 updated:

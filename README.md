@@ -11,18 +11,13 @@
 
 - 提问知识：先检索本仓库已有内容，再结合通用技术知识回答。
 - 沉淀知识：把聊天内容整理成结构化 Markdown 笔记，而不是保存完整聊天记录。
-- 整理知识：合并重复内容，更新分类索引，补充关联链接。
+- 整理知识：合并重复内容，更新模块、章节索引，补充关联链接。
 
-## 分类
+## 模块
 
-- [AI](content/ai/index.md)
-- [架构与系统设计](content/architecture/index.md)
-- [工程实践](content/engineering/index.md)
-- [数据库与存储](content/database/index.md)
-- [前端](content/frontend/index.md)
-- [后端](content/backend/index.md)
-- [工具与效率](content/tools/index.md)
-- [故障与复盘](content/incidents/index.md)
+- [技术](content/tech/index.md)
+- [沟通](content/communication/index.md)
+- [旅游](content/travel/index.md)
 
 ## 网页端
 

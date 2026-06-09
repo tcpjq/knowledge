@@ -7,7 +7,23 @@ const webRoot = path.resolve(scriptDir, '..');
 const repoRoot = path.resolve(webRoot, '..');
 const outputPath = path.join(webRoot, 'src', 'generated', 'knowledge-data.ts');
 
-const categoryLabels = {
+const moduleLabels = {
+  tech: '技术',
+  communication: '沟通',
+  travel: '旅游',
+  topics: '主题',
+  general: '通用',
+};
+
+const moduleDescriptions = {
+  tech: 'AI 工程、架构、工程实践、数据库、前端、后端、工具与故障复盘。',
+  communication: '表达、写作、会议、反馈、谈判、协作和关系处理。',
+  travel: '目的地、攻略、预算、行程、签证、酒店和旅行复盘。',
+  topics: '跨模块主题、路线图和能力地图。',
+  general: '没有归入具体模块的通用内容。',
+};
+
+const sectionLabels = {
   ai: 'AI',
   architecture: '架构与系统设计',
   engineering: '工程实践',
@@ -16,11 +32,14 @@ const categoryLabels = {
   backend: '后端',
   tools: '工具与效率',
   incidents: '故障与复盘',
-  topics: '主题',
+  root: '概览',
   general: '通用',
 };
 
-const categoryOrder = [
+const moduleOrder = ['tech', 'communication', 'travel', 'topics', 'general'];
+
+const sectionOrder = [
+  'root',
   'ai',
   'architecture',
   'engineering',
@@ -29,11 +48,9 @@ const categoryOrder = [
   'backend',
   'tools',
   'incidents',
-  'topics',
   'general',
 ];
 
-const explicitFiles = ['README.md', 'index.md'];
 const contentRoots = ['content', 'topics'];
 
 async function fileExists(filePath) {
@@ -151,22 +168,44 @@ function deriveTitle(frontmatter, body, relPath) {
     .join(' ');
 }
 
-function deriveCategory(frontmatter, relPath) {
-  if (typeof frontmatter.category === 'string' && frontmatter.category.trim()) {
-    const category = frontmatter.category.trim();
-    return categoryLabels[category] ? category : 'general';
-  }
-
+function deriveLocation(frontmatter, relPath) {
   const parts = relPath.split('/');
-  if (parts[0] === 'content' && parts[1] && categoryLabels[parts[1]]) {
-    return parts[1];
+
+  if (parts[0] === 'content') {
+    const moduleId = parts[1] && moduleLabels[parts[1]] ? parts[1] : 'general';
+    const sectionId = parts[2] && parts[2] !== 'index.md' ? parts[2] : 'root';
+    return {
+      module: moduleId,
+      moduleLabel: moduleLabels[moduleId] ?? moduleLabels.general,
+      section: sectionLabels[sectionId] ? sectionId : 'general',
+      sectionLabel: sectionLabels[sectionId] ?? sectionLabels.general,
+    };
   }
 
   if (parts[0] === 'topics') {
-    return 'topics';
+    return {
+      module: 'topics',
+      moduleLabel: moduleLabels.topics,
+      section: 'root',
+      sectionLabel: sectionLabels.root,
+    };
   }
 
-  return 'general';
+  const frontmatterModule =
+    typeof frontmatter.module === 'string' && moduleLabels[frontmatter.module]
+      ? frontmatter.module
+      : 'general';
+  const frontmatterSection =
+    typeof frontmatter.section === 'string' && sectionLabels[frontmatter.section]
+      ? frontmatter.section
+      : 'root';
+
+  return {
+    module: frontmatterModule,
+    moduleLabel: moduleLabels[frontmatterModule] ?? moduleLabels.general,
+    section: frontmatterSection,
+    sectionLabel: sectionLabels[frontmatterSection] ?? sectionLabels.root,
+  };
 }
 
 function stripMarkdown(markdown) {
@@ -185,12 +224,6 @@ function stripMarkdown(markdown) {
 async function collectFiles() {
   const files = [];
 
-  for (const file of explicitFiles) {
-    if (await fileExists(path.join(repoRoot, file))) {
-      files.push(file);
-    }
-  }
-
   for (const root of contentRoots) {
     files.push(...(await walkMarkdownFiles(root)));
   }
@@ -198,27 +231,52 @@ async function collectFiles() {
   return [...new Set(files)].sort((a, b) => a.localeCompare(b, 'zh-CN'));
 }
 
-function buildCategories(docs) {
-  const grouped = new Map();
+function buildModules(docs) {
+  const modules = new Map();
 
-  for (const category of categoryOrder) {
-    grouped.set(category, []);
+  for (const moduleId of moduleOrder) {
+    modules.set(moduleId, {
+      id: moduleId,
+      label: moduleLabels[moduleId],
+      description: moduleDescriptions[moduleId],
+      sections: new Map(),
+    });
   }
 
   for (const doc of docs) {
-    if (!grouped.has(doc.category)) {
-      grouped.set(doc.category, []);
+    if (!modules.has(doc.module)) {
+      modules.set(doc.module, {
+        id: doc.module,
+        label: doc.moduleLabel,
+        description: moduleDescriptions.general,
+        sections: new Map(),
+      });
     }
-    grouped.get(doc.category).push(doc.id);
+
+    const moduleEntry = modules.get(doc.module);
+    if (!moduleEntry.sections.has(doc.section)) {
+      moduleEntry.sections.set(doc.section, {
+        id: doc.section,
+        label: doc.sectionLabel,
+        docs: [],
+      });
+    }
+    moduleEntry.sections.get(doc.section).docs.push(doc.id);
   }
 
-  return [...grouped.entries()]
-    .filter(([, docsInCategory]) => docsInCategory.length > 0)
-    .map(([id, docsInCategory]) => ({
-      id,
-      label: categoryLabels[id] ?? id,
-      docs: docsInCategory,
-    }));
+  return [...modules.values()]
+    .filter((moduleEntry) => moduleEntry.sections.size > 0)
+    .map((moduleEntry) => {
+      const sections = [...moduleEntry.sections.values()].sort((a, b) => {
+        const aIndex = sectionOrder.indexOf(a.id);
+        const bIndex = sectionOrder.indexOf(b.id);
+        return (aIndex === -1 ? 999 : aIndex) - (bIndex === -1 ? 999 : bIndex);
+      });
+      return {
+        ...moduleEntry,
+        sections,
+      };
+    });
 }
 
 async function main() {
@@ -228,12 +286,19 @@ async function main() {
   for (const relPath of files) {
     const markdown = await readFile(path.join(repoRoot, relPath), 'utf8');
     const { frontmatter, body } = parseFrontmatter(markdown);
-    const category = deriveCategory(frontmatter, relPath);
+    const location = deriveLocation(frontmatter, relPath);
     const tags = Array.isArray(frontmatter.tags) ? frontmatter.tags : [];
     const headings = extractHeadings(body);
     const title = deriveTitle(frontmatter, body, relPath);
     const id = relPath.replace(/\.md$/, '');
-    const searchText = [title, relPath, categoryLabels[category], ...tags, stripMarkdown(body)]
+    const searchText = [
+      title,
+      relPath,
+      location.moduleLabel,
+      location.sectionLabel,
+      ...tags,
+      stripMarkdown(body),
+    ]
       .join(' ')
       .toLowerCase();
 
@@ -241,8 +306,10 @@ async function main() {
       id,
       title,
       path: relPath,
-      category,
-      categoryLabel: categoryLabels[category] ?? categoryLabels.general,
+      module: location.module,
+      moduleLabel: location.moduleLabel,
+      section: location.section,
+      sectionLabel: location.sectionLabel,
       tags,
       headings,
       body,
@@ -250,7 +317,7 @@ async function main() {
     });
   }
 
-  const categories = buildCategories(docs);
+  const modules = buildModules(docs);
   const output = `export type Heading = {
   level: number;
   text: string;
@@ -261,23 +328,32 @@ export type KnowledgeDoc = {
   id: string;
   title: string;
   path: string;
-  category: string;
-  categoryLabel: string;
+  module: string;
+  moduleLabel: string;
+  section: string;
+  sectionLabel: string;
   tags: string[];
   headings: Heading[];
   body: string;
   searchText: string;
 };
 
-export type KnowledgeCategory = {
+export type KnowledgeSection = {
   id: string;
   label: string;
   docs: string[];
 };
 
+export type KnowledgeModule = {
+  id: string;
+  label: string;
+  description: string;
+  sections: KnowledgeSection[];
+};
+
 export const knowledgeDocs: KnowledgeDoc[] = ${JSON.stringify(docs, null, 2)};
 
-export const knowledgeCategories: KnowledgeCategory[] = ${JSON.stringify(categories, null, 2)};
+export const knowledgeModules: KnowledgeModule[] = ${JSON.stringify(modules, null, 2)};
 `;
 
   await mkdir(path.dirname(outputPath), { recursive: true });

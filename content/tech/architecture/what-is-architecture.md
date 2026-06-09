@@ -1,6 +1,7 @@
 ---
 title: 什么是架构
-category: architecture
+module: tech
+section: architecture
 tags: [architecture, system-design]
 created: 2026-06-09
 updated: 2026-06-09
@@ -174,4 +175,4 @@ status: draft
 ## 关联
 
 - [架构与系统设计](index.md)
-- [AI 时代技术能力地图](../../topics/ai-era-technical-capability-map.md)
+- [AI 时代技术能力地图](../../../topics/ai-era-technical-capability-map.md)

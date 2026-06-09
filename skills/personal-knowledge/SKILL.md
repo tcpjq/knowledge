@@ -33,22 +33,22 @@ description: Use when working with this repository as a personal technical knowl
 3. 创建新笔记前，先搜索是否已有相关笔记。
 4. 根据内容类型使用 `templates/note.md`、`templates/decision.md` 或 `templates/incident.md`。
 5. 每篇笔记只聚焦一个概念、一个决策或一次故障。
-6. 更新对应分类的 `index.md`。
+6. 更新对应模块和章节的 `index.md`。
 7. 如果新增内容是基础或高频知识，也更新根目录 `index.md`。
 8. 最后报告修改了哪些文件。
 
 ## Organize Mode
 
-1. 用 `rg` 搜索相关分类。
+1. 用 `rg` 搜索相关模块或章节。
 2. 识别重复、重叠、过时或未被索引的笔记。
 3. 只做和当前请求相关的聚焦修改。
 4. 保留有价值的背景、例子、决策和本地链接。
-5. 更新受影响的索引。
+5. 更新受影响的模块索引和章节索引。
 6. 最后说明修改内容和原因。
 
 ## 分类与写作参考
 
-- 使用 `references/taxonomy.md` 判断分类。
+- 使用 `references/taxonomy.md` 判断模块和章节。
 - 使用 `references/writing-rules.md` 判断命名、结构、链接和更新方式。
 
 ## 安全边界

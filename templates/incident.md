@@ -1,6 +1,7 @@
 ---
 title:
-category: incidents
+module: tech
+section: incidents
 tags: []
 created:
 updated:

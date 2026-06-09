@@ -1,7 +1,7 @@
 import { createElement, useMemo, useState, type ReactNode } from 'react';
 import {
-  knowledgeCategories,
   knowledgeDocs,
+  knowledgeModules,
   type Heading,
   type KnowledgeDoc,
 } from './generated/knowledge-data';
@@ -173,7 +173,7 @@ function filterDocs(query: string) {
 
 function findInitialDoc() {
   return (
-    knowledgeDocs.find((doc) => doc.id === 'content/architecture/what-is-architecture') ??
+    knowledgeDocs.find((doc) => doc.id === 'content/tech/architecture/what-is-architecture') ??
     knowledgeDocs[0]
   );
 }
@@ -181,7 +181,8 @@ function findInitialDoc() {
 function Metadata({ doc }: { doc: KnowledgeDoc }) {
   return (
     <div className="doc-meta">
-      <span>{doc.categoryLabel}</span>
+      <span>{doc.moduleLabel}</span>
+      <span>{doc.sectionLabel}</span>
       <span>{doc.path}</span>
       {doc.tags.map((tag) => (
         <span className="tag" key={tag}>
@@ -213,9 +214,26 @@ function Toc({ headings }: { headings: Heading[] }) {
 export default function App() {
   const initialDoc = findInitialDoc();
   const [selectedId, setSelectedId] = useState(initialDoc?.id ?? '');
+  const [activeModuleId, setActiveModuleId] = useState(initialDoc?.module ?? knowledgeModules[0]?.id ?? '');
   const [query, setQuery] = useState('');
   const searchResults = useMemo(() => filterDocs(query), [query]);
   const selectedDoc = docById.get(selectedId) ?? initialDoc;
+  const activeModule =
+    knowledgeModules.find((module) => module.id === activeModuleId) ?? knowledgeModules[0];
+
+  const selectModule = (moduleId: string) => {
+    const nextModule = knowledgeModules.find((module) => module.id === moduleId);
+    const firstDocId = nextModule?.sections.flatMap((section) => section.docs)[0];
+    setActiveModuleId(moduleId);
+    if (firstDocId) {
+      setSelectedId(firstDocId);
+    }
+  };
+
+  const selectDoc = (doc: KnowledgeDoc) => {
+    setSelectedId(doc.id);
+    setActiveModuleId(doc.module);
+  };
 
   if (!selectedDoc) {
     return (
@@ -247,19 +265,39 @@ export default function App() {
           />
         </div>
 
-        <nav className="category-nav" aria-label="知识分类">
-          {knowledgeCategories.map((category) => (
-            <section className="category-group" key={category.id}>
-              <h2>{category.label}</h2>
+        <nav className="sidebar-modules" aria-label="知识模块">
+          {knowledgeModules.map((module) => (
+            <button
+              className={module.id === activeModule?.id ? 'module-tab active' : 'module-tab'}
+              key={module.id}
+              onClick={() => selectModule(module.id)}
+              type="button"
+            >
+              {module.label}
+            </button>
+          ))}
+        </nav>
+
+        <nav className="category-nav" aria-label="当前模块目录">
+          {activeModule ? (
+            <div className="module-context">
+              <strong>{activeModule.label}</strong>
+              <span>{activeModule.description}</span>
+            </div>
+          ) : null}
+
+          {activeModule?.sections.map((section) => (
+            <section className="category-group" key={section.id}>
+              <h2>{section.label}</h2>
               <div className="doc-list">
-                {category.docs.map((docId) => {
+                {section.docs.map((docId) => {
                   const doc = docById.get(docId);
                   if (!doc) return null;
                   return (
                     <button
                       className={doc.id === selectedDoc.id ? 'doc-button active' : 'doc-button'}
                       key={doc.id}
-                      onClick={() => setSelectedId(doc.id)}
+                      onClick={() => selectDoc(doc)}
                       type="button"
                     >
                       <span>{doc.title}</span>
@@ -275,13 +313,27 @@ export default function App() {
 
       <main className="content-panel">
         <header className="topbar">
-          <input
-            aria-label="搜索知识库"
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="搜索标题、正文、标签..."
-            type="search"
-            value={query}
-          />
+          <nav className="module-tabs" aria-label="知识模块">
+            {knowledgeModules.map((module) => (
+              <button
+                className={module.id === activeModule?.id ? 'module-tab active' : 'module-tab'}
+                key={module.id}
+                onClick={() => selectModule(module.id)}
+                type="button"
+              >
+                {module.label}
+              </button>
+            ))}
+          </nav>
+          <div className="search-field">
+            <input
+              aria-label="搜索知识库"
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder="搜索全部知识库..."
+              type="search"
+              value={query}
+            />
+          </div>
         </header>
 
         {query.trim() ? (
@@ -298,11 +350,13 @@ export default function App() {
                   <button
                     className={doc.id === selectedDoc.id ? 'result-card active' : 'result-card'}
                     key={doc.id}
-                    onClick={() => setSelectedId(doc.id)}
+                    onClick={() => selectDoc(doc)}
                     type="button"
                   >
                     <strong>{doc.title}</strong>
-                    <span>{doc.categoryLabel}</span>
+                    <span>
+                      {doc.moduleLabel} / {doc.sectionLabel}
+                    </span>
                     <small>{doc.path}</small>
                   </button>
                 ))}
