@@ -260,7 +260,7 @@ input[type="search"]:focus {
 }
 
 .section-heading {
-  align-items: baseline;
+  align-items: center;
   display: flex;
   justify-content: space-between;
   gap: 16px;
@@ -269,12 +269,28 @@ input[type="search"]:focus {
 
 .section-heading h1 {
   font-size: 22px;
-  margin: 0;
+  margin: 0 0 2px;
 }
 
 .section-heading span,
 .no-results {
   color: #657080;
+}
+
+.search-close {
+  background: #ffffff;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  color: #3f4b59;
+  flex: 0 0 auto;
+  font-size: 13px;
+  padding: 7px 11px;
+}
+
+.search-close:hover {
+  background: #eef3f1;
+  border-color: #b9d2c8;
+  color: #1b4d3e;
 }
 
 .result-list {

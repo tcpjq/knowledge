@@ -412,8 +412,18 @@ export default function App() {
         {query.trim() ? (
           <section className="search-results" aria-label="搜索结果">
             <div className="section-heading">
-              <h1>搜索结果</h1>
-              <span>{searchResults.length} 条匹配</span>
+              <div>
+                <h1>搜索结果</h1>
+                <span>{searchResults.length} 条匹配</span>
+              </div>
+              <button
+                aria-label="关闭搜索结果"
+                className="search-close"
+                onClick={() => setQuery('')}
+                type="button"
+              >
+                关闭
+              </button>
             </div>
             <div className="search-controls" aria-label="搜索范围">
               <span>范围</span>
