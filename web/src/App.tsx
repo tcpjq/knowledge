@@ -1,4 +1,4 @@
-import { createElement, useMemo, useState, type ReactNode } from 'react';
+import { createElement, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   knowledgeChunks,
   knowledgeDocs,
@@ -7,7 +7,13 @@ import {
   type KnowledgeDoc,
 } from './generated/knowledge-data';
 import { flattenDocIds, getAdjacentDocIds, getDefaultExpandedSections } from './navigation';
-import { highlightText, searchKnowledge, type HighlightPart } from './search';
+import {
+  highlightText,
+  searchKnowledge,
+  searchSelectionKnowledge,
+  type HighlightPart,
+  type SearchResult,
+} from './search';
 
 const docById = new Map(knowledgeDocs.map((doc) => [doc.id, doc]));
 
@@ -222,6 +228,80 @@ function Toc({ headings }: { headings: Heading[] }) {
   );
 }
 
+function RelatedKnowledge({
+  docs,
+  onSelect,
+}: {
+  docs: KnowledgeDoc[];
+  onSelect: (doc: KnowledgeDoc) => void;
+}) {
+  if (docs.length === 0) return null;
+
+  return (
+    <section className="related-knowledge" aria-label="相关知识">
+      <h2>相关知识</h2>
+      <div className="related-grid">
+        {docs.map((doc) => (
+          <button className="related-card" key={doc.id} onClick={() => onSelect(doc)} type="button">
+            <strong>{doc.title}</strong>
+            <span>
+              {doc.moduleLabel} / {doc.sectionLabel}
+            </span>
+            {doc.tags.length > 0 ? <small>{doc.tags.slice(0, 3).join(' / ')}</small> : null}
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+type SelectionPopoverState = {
+  text: string;
+  top: number;
+  left: number;
+  results: SearchResult<KnowledgeDoc>[];
+};
+
+function SelectionKnowledgePopover({
+  state,
+  onSelect,
+}: {
+  state: SelectionPopoverState | null;
+  onSelect: (doc: KnowledgeDoc) => void;
+}) {
+  if (!state || state.results.length === 0) return null;
+
+  return (
+    <aside
+      className="selection-popover"
+      style={{ left: state.left, top: state.top }}
+      aria-label="选中文本相关知识"
+    >
+      <div className="selection-popover-header">
+        <span>相关知识点</span>
+        <small>{state.text}</small>
+      </div>
+      <div className="selection-result-list">
+        {state.results.map((result) => (
+          <button
+            className="selection-result"
+            key={`${result.doc.id}-${result.chunk?.id ?? 'doc'}`}
+            onClick={() => onSelect(result.doc)}
+            type="button"
+          >
+            <strong>{result.doc.title}</strong>
+            <span>
+              {result.doc.moduleLabel} / {result.doc.sectionLabel}
+              {result.chunk ? ` / ${result.chunk.heading}` : ''}
+            </span>
+            <small>{result.snippet}</small>
+          </button>
+        ))}
+      </div>
+    </aside>
+  );
+}
+
 export default function App() {
   const initialDoc = findInitialDoc();
   const initialModuleId = initialDoc?.module ?? knowledgeModules[0]?.id ?? '';
@@ -233,6 +313,9 @@ export default function App() {
     () => new Set(getDefaultExpandedSections(initialModule, initialDoc?.section)),
   );
   const [query, setQuery] = useState('');
+  const articleRef = useRef<HTMLElement | null>(null);
+  const popoverRef = useRef<HTMLDivElement | null>(null);
+  const [selectionPopover, setSelectionPopover] = useState<SelectionPopoverState | null>(null);
   const [searchModuleId, setSearchModuleId] = useState('all');
   const searchResults = useMemo(
     () =>
@@ -254,6 +337,11 @@ export default function App() {
     : { previousId: undefined, nextId: undefined };
   const previousDoc = adjacentDocIds.previousId ? docById.get(adjacentDocIds.previousId) : undefined;
   const nextDoc = adjacentDocIds.nextId ? docById.get(adjacentDocIds.nextId) : undefined;
+  const relatedDocs = selectedDoc
+    ? selectedDoc.relatedDocIds
+        .map((docId) => docById.get(docId))
+        .filter((doc): doc is KnowledgeDoc => Boolean(doc))
+    : [];
 
   const selectModule = (moduleId: string) => {
     const nextModule = knowledgeModules.find((module) => module.id === moduleId);
@@ -294,6 +382,92 @@ export default function App() {
       return next;
     });
   };
+
+  const selectPopoverDoc = (doc: KnowledgeDoc) => {
+    setSelectionPopover(null);
+    window.getSelection()?.removeAllRanges();
+    selectDoc(doc);
+  };
+
+  useEffect(() => {
+    const closePopover = () => setSelectionPopover(null);
+
+    if (!selectedDoc) {
+      closePopover();
+      return;
+    }
+
+    const handleSelection = () => {
+      const selection = window.getSelection();
+      const articleElement = articleRef.current;
+      if (!selection || selection.rangeCount === 0 || !articleElement) {
+        closePopover();
+        return;
+      }
+
+      const selectedText = selection.toString().replace(/\s+/g, ' ').trim();
+      const range = selection.getRangeAt(0);
+      const container = range.commonAncestorContainer;
+      const containerElement =
+        container.nodeType === Node.TEXT_NODE ? container.parentElement : container;
+      if (
+        !selectedText ||
+        !(containerElement instanceof Node) ||
+        !articleElement.contains(containerElement)
+      ) {
+        closePopover();
+        return;
+      }
+
+      const results = searchSelectionKnowledge({
+        selectedText,
+        currentDocId: selectedDoc.id,
+        docs: knowledgeDocs,
+        chunks: knowledgeChunks,
+        modules: knowledgeModules,
+      });
+
+      if (results.length === 0) {
+        closePopover();
+        return;
+      }
+
+      const rect = range.getBoundingClientRect();
+      const width = 340;
+      const left = Math.min(
+        Math.max(16, rect.left + window.scrollX),
+        window.scrollX + window.innerWidth - width - 16,
+      );
+      const top = rect.bottom + window.scrollY + 10;
+      setSelectionPopover({ text: selectedText, top, left, results });
+    };
+
+    const handleMouseUp = () => window.setTimeout(handleSelection, 0);
+    const handleKeyUp = () => window.setTimeout(handleSelection, 0);
+    const handlePointerDown = (event: PointerEvent) => {
+      if (event.target instanceof Node && popoverRef.current?.contains(event.target)) return;
+      closePopover();
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') closePopover();
+    };
+
+    document.addEventListener('mouseup', handleMouseUp);
+    document.addEventListener('keyup', handleKeyUp);
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('mouseup', handleMouseUp);
+      document.removeEventListener('keyup', handleKeyUp);
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedDoc]);
+
+  useEffect(() => {
+    setSelectionPopover(null);
+  }, [selectedDoc?.id]);
 
   if (!selectedDoc) {
     return (
@@ -473,7 +647,7 @@ export default function App() {
           </section>
         ) : null}
 
-        <article className="article">
+        <article className="article" ref={articleRef}>
           <div className="article-header">
             <h1>{selectedDoc.title}</h1>
             <Metadata doc={selectedDoc} />
@@ -483,6 +657,7 @@ export default function App() {
             </div>
           </div>
           <div className="markdown-body">{renderMarkdown(selectedDoc.body)}</div>
+          <RelatedKnowledge docs={relatedDocs} onSelect={selectDoc} />
           {(previousDoc || nextDoc) ? (
             <nav className="article-nav" aria-label="上一篇和下一篇">
               {previousDoc ? (
@@ -516,6 +691,9 @@ export default function App() {
         <h2>本文目录</h2>
         <Toc headings={selectedDoc.headings} />
       </aside>
+      <div ref={popoverRef}>
+        <SelectionKnowledgePopover state={selectionPopover} onSelect={selectPopoverDoc} />
+      </div>
     </div>
   );
 }

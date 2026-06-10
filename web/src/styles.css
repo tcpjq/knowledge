@@ -456,6 +456,126 @@ mark {
   padding: 2px 0 2px 16px;
 }
 
+.related-knowledge {
+  border-top: 1px solid #dfe3e8;
+  margin-top: 36px;
+  padding-top: 22px;
+}
+
+.related-knowledge h2 {
+  color: #101820;
+  font-size: 20px;
+  margin: 0 0 14px;
+}
+
+.related-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.related-card {
+  background: #ffffff;
+  border: 1px solid #dfe3e8;
+  border-radius: 8px;
+  color: #25313f;
+  display: grid;
+  gap: 5px;
+  min-height: 96px;
+  padding: 14px;
+  text-align: left;
+}
+
+.related-card:hover {
+  background: #eef3f1;
+  border-color: #b9d2c8;
+}
+
+.related-card strong {
+  color: #101820;
+  font-size: 15px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.related-card span,
+.related-card small {
+  color: #657080;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.selection-popover {
+  background: #ffffff;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  box-shadow: 0 18px 44px rgba(16, 24, 32, 0.16);
+  max-width: calc(100vw - 32px);
+  overflow: hidden;
+  position: absolute;
+  width: 340px;
+  z-index: 20;
+}
+
+.selection-popover-header {
+  background: #f5f8f7;
+  border-bottom: 1px solid #dfe3e8;
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+}
+
+.selection-popover-header span {
+  color: #13372c;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.selection-popover-header small {
+  color: #657080;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.selection-result-list {
+  display: grid;
+  max-height: 320px;
+  overflow: auto;
+  padding: 6px;
+}
+
+.selection-result {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: #25313f;
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  text-align: left;
+  width: 100%;
+}
+
+.selection-result:hover {
+  background: #eef3f1;
+  border-color: #b9d2c8;
+}
+
+.selection-result strong {
+  color: #101820;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.selection-result span,
+.selection-result small {
+  color: #657080;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
 .article-nav {
   border-top: 1px solid #dfe3e8;
   display: grid;
