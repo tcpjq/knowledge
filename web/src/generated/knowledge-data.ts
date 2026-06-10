@@ -503,12 +503,102 @@ export const knowledgeDocs: KnowledgeDoc[] = [
       },
       {
         "level": 2,
-        "text": "章节",
-        "slug": "章节"
+        "text": "笔记",
+        "slug": "笔记"
       }
     ],
-    "body": "# 工具与效率\n\n开发工具、Git、CI/CD、编辑器工作流、命令行效率、自动化和本地开发环境。\n\n## 章节\n\n暂无。\n",
-    "searchText": "工具与效率 content/tech/tools/index.md 技术 工具与效率 工具与效率 开发工具、git、ci/cd、编辑器工作流、命令行效率、自动化和本地开发环境。 章节 暂无。"
+    "body": "# 工具与效率\n\n开发工具、Git、CI/CD、编辑器工作流、命令行效率、自动化和本地开发环境。\n\n## 笔记\n\n- [知识库使用与反馈流程](knowledge-base-workflow.md)\n",
+    "searchText": "工具与效率 content/tech/tools/index.md 技术 工具与效率 工具与效率 开发工具、git、ci/cd、编辑器工作流、命令行效率、自动化和本地开发环境。 笔记 - 知识库使用与反馈流程"
+  },
+  {
+    "id": "content/tech/tools/knowledge-base-workflow",
+    "title": "知识库使用与反馈流程",
+    "path": "content/tech/tools/knowledge-base-workflow.md",
+    "module": "tech",
+    "moduleLabel": "技术",
+    "section": "tools",
+    "sectionLabel": "工具与效率",
+    "tags": [
+      "knowledge-base",
+      "github",
+      "giscus",
+      "search",
+      "feedback"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "知识库使用与反馈流程",
+        "slug": "知识库使用与反馈流程"
+      },
+      {
+        "level": 2,
+        "text": "核心结论",
+        "slug": "核心结论"
+      },
+      {
+        "level": 2,
+        "text": "存储结构",
+        "slug": "存储结构"
+      },
+      {
+        "level": 2,
+        "text": "构建流程",
+        "slug": "构建流程"
+      },
+      {
+        "level": 2,
+        "text": "如何搜索知识",
+        "slug": "如何搜索知识"
+      },
+      {
+        "level": 2,
+        "text": "如何关联知识",
+        "slug": "如何关联知识"
+      },
+      {
+        "level": 3,
+        "text": "手动关联",
+        "slug": "手动关联"
+      },
+      {
+        "level": 2,
+        "text": "关联",
+        "slug": "关联"
+      },
+      {
+        "level": 3,
+        "text": "运行时自动关联",
+        "slug": "运行时自动关联"
+      },
+      {
+        "level": 2,
+        "text": "如何评论",
+        "slug": "如何评论"
+      },
+      {
+        "level": 2,
+        "text": "如何反馈问题",
+        "slug": "如何反馈问题"
+      },
+      {
+        "level": 2,
+        "text": "评论和反馈的区别",
+        "slug": "评论和反馈的区别"
+      },
+      {
+        "level": 2,
+        "text": "后续 AI 修复闭环",
+        "slug": "后续-ai-修复闭环"
+      },
+      {
+        "level": 2,
+        "text": "关联",
+        "slug": "关联-2"
+      }
+    ],
+    "body": "\n# 知识库使用与反馈流程\n\n## 核心结论\n\n当前知识库是一个基于 Markdown、GitHub 和静态前端的个人知识系统。\n\n内容存储在 Git 仓库中，网页端通过构建脚本生成搜索索引和导航数据；读者可以搜索知识、查看相关知识、在文章底部评论，也可以对整篇文章、某个段落或选中文字提交 GitHub Issue 反馈。\n\n这个设计把不同类型的互动分开：\n\n- 普通讨论走 GitHub Discussions / giscus。\n- 内容缺失、错误、过时等可处理反馈走 GitHub Issues。\n- 内容修复仍然通过 Pull Request 和 review 合并。\n\n## 存储结构\n\n知识内容以 Markdown 文件存储在仓库中。\n\n主要目录：\n\n```text\ncontent/\n  tech/\n  communication/\n  travel/\n\ntopics/\n\nweb/\n  src/\n  scripts/\n  tests/\n```\n\n内容组织采用两层分类：\n\n```text\n模块 module\n  章节 section\n    笔记 note\n```\n\n例如：\n\n```text\ncontent/tech/tools/knowledge-base-workflow.md\n```\n\n表示：\n\n- module：`tech`\n- section：`tools`\n- note：`knowledge-base-workflow`\n\n新增笔记时，需要同步更新对应章节的 `index.md`，让网页导航能展示出来。\n\n## 构建流程\n\n网页端在构建时读取 Markdown 内容，并生成静态数据文件：\n\n```text\nMarkdown 文件\n  -> web/scripts/generate-knowledge-data.mjs\n  -> web/src/generated/knowledge-data.ts\n  -> React 前端渲染导航、正文、搜索、相关知识\n```\n\n构建命令：\n\n```bash\ncd web\nnpm run build\n```\n\n测试命令：\n\n```bash\ncd web\nnpm run test\n```\n\n构建不会把评论或反馈写回 Markdown。评论和反馈分别存储在 GitHub Discussions 和 GitHub Issues 中。\n\n## 如何搜索知识\n\n网页顶部提供全文搜索。\n\n搜索数据来自每篇文档的：\n\n- 标题\n- 文件路径\n- 模块和章节名\n- tags\n- Markdown 正文\n- 按标题切分的正文 chunk\n\n搜索逻辑在：\n\n```text\nweb/src/search.ts\n```\n\n搜索结果会显示：\n\n- 匹配文档标题\n- 所属模块和章节\n- 命中的正文片段\n- 匹配关键词高亮\n\n文章内选中文字时，也会触发一次本地搜索，用选中的文本查找相关知识点。\n\n## 如何关联知识\n\n知识关联分两类：手动关联和运行时自动关联。\n\n### 手动关联\n\n在 Markdown 文章末尾添加 `## 关联` 章节：\n\n```markdown\n## 关联\n\n- [AI](../ai/index.md)\n- [工具与效率](index.md)\n```\n\n手动关联优先级最高。网页端会解析这些链接，并优先展示到文章底部的“相关知识”区域。\n\n### 运行时自动关联\n\n如果手动关联不足，前端会基于当前文档自动补充相关内容。\n\n自动关联会参考：\n\n- title\n- tags\n- 二级和三级标题\n- 正文中的问题式句子\n- 本地搜索结果\n\n自动关联在浏览器运行时计算，不再依赖构建期生成的 `relatedDocIds`。\n\n## 如何评论\n\n文章底部的“评论”区域使用 giscus。\n\ngiscus 的作用是把 GitHub Discussions 嵌入到静态网页中：\n\n```text\n文章页面\n  -> giscus script\n  -> GitHub Discussions\n```\n\n当前配置：\n\n```text\nrepo: tcpjq/knowledge\nrepoId: R_kgDOS1ZCvQ\ncategory: General\ncategoryId: DIC_kwDOS1ZCvc4C-5Bs\nmapping: specific\ntheme: preferred_color_scheme\nlang: zh-CN\n```\n\n因为当前网页是 SPA，切换文章时浏览器 pathname 不变，所以不能用 `pathname` 做 discussion 映射。\n\n当前使用 `specific` 映射，并由前端按文章生成 term：\n\n```text\nknowledge:<doc.id>\n```\n\n例如：\n\n```text\nknowledge:content/tech/tools/knowledge-base-workflow\n```\n\n这样每篇文章都有独立的 Discussion。\n\n评论适合用于：\n\n- 讨论文章观点\n- 补充背景\n- 读者交流\n- 非必须处理的留言\n\n## 如何反馈问题\n\n如果文章内容缺失、不准确、过时或需要修改，应该使用内容反馈，而不是普通评论。\n\n网页端提供三种反馈入口：\n\n- `反馈本文问题`：针对整篇文章。\n- `反馈此段`：针对某个段落。\n- `反馈选中文字`：针对选中的原文。\n\n这些入口都会打开 GitHub 新建 Issue 页面，并预填：\n\n- 文档标题\n- Markdown 路径\n- 位置\n- 原文\n- 问题说明模板\n- 期望修改模板\n- `content-feedback` label\n\n反馈 Issue 的模板在：\n\n```text\n.github/ISSUE_TEMPLATE/content-feedback.md\n```\n\n反馈适合用于：\n\n- 指出事实错误。\n- 补充缺失概念。\n- 标记过时内容。\n- 建议改写不清楚的段落。\n- 给后续 AI 自动修复提供结构化输入。\n\n## 评论和反馈的区别\n\n| 类型 | 存储位置 | 适合内容 | 是否需要处理 |\n| --- | --- | --- | --- |\n| 评论 | GitHub Discussions | 讨论、补充、交流 | 不一定 |\n| 反馈 | GitHub Issues | 缺失、错误、过时、待修改 | 是 |\n\n简单判断：\n\n- 想讨论：用评论。\n- 想推动修改：用反馈。\n\n## 后续 AI 修复闭环\n\n后续可以基于 `content-feedback` Issue 建立自动修复流程：\n\n```text\nGitHub Issues(content-feedback)\n  -> 定时 GitHub Actions\n  -> AI 读取反馈和 Markdown 上下文\n  -> 修改文章\n  -> 创建修复分支\n  -> 提交 Pull Request\n  -> 飞书通知相关人员 review\n  -> 人工合并\n  -> GitHub 构建发布\n  -> Issue 关闭\n```\n\n第一版已经完成的是反馈数据入口和 GitHub 存储。AI 自动校验、自动修改、飞书通知和自动关闭反馈 Issue 属于下一阶段。\n\n## 关联\n\n- [工具与效率](index.md)\n- [Superpowers 到 Codex 的子 agent 编排链路](../ai/superpowers-to-codex-subagent-workflow.md)\n",
+    "searchText": "知识库使用与反馈流程 content/tech/tools/knowledge-base-workflow.md 技术 工具与效率 knowledge-base github giscus search feedback 知识库使用与反馈流程 核心结论 当前知识库是一个基于 markdown、github 和静态前端的个人知识系统。 内容存储在 git 仓库中，网页端通过构建脚本生成搜索索引和导航数据；读者可以搜索知识、查看相关知识、在文章底部评论，也可以对整篇文章、某个段落或选中文字提交 github issue 反馈。 这个设计把不同类型的互动分开： - 普通讨论走 github discussions / giscus。 - 内容缺失、错误、过时等可处理反馈走 github issues。 - 内容修复仍然通过 pull request 和 review 合并。 存储结构 知识内容以 markdown 文件存储在仓库中。 主要目录： 内容组织采用两层分类： 例如： 表示： - module：tech - section：tools - note：knowledge-base-workflow 新增笔记时，需要同步更新对应章节的 index.md，让网页导航能展示出来。 构建流程 网页端在构建时读取 markdown 内容，并生成静态数据文件： 构建命令： 测试命令： 构建不会把评论或反馈写回 markdown。评论和反馈分别存储在 github discussions 和 github issues 中。 如何搜索知识 网页顶部提供全文搜索。 搜索数据来自每篇文档的： - 标题 - 文件路径 - 模块和章节名 - tags - markdown 正文 - 按标题切分的正文 chunk 搜索逻辑在： 搜索结果会显示： - 匹配文档标题 - 所属模块和章节 - 命中的正文片段 - 匹配关键词高亮 文章内选中文字时，也会触发一次本地搜索，用选中的文本查找相关知识点。 如何关联知识 知识关联分两类：手动关联和运行时自动关联。 手动关联 在 markdown 文章末尾添加 ## 关联 章节： 手动关联优先级最高。网页端会解析这些链接，并优先展示到文章底部的“相关知识”区域。 运行时自动关联 如果手动关联不足，前端会基于当前文档自动补充相关内容。 自动关联会参考： - title - tags - 二级和三级标题 - 正文中的问题式句子 - 本地搜索结果 自动关联在浏览器运行时计算，不再依赖构建期生成的 relateddocids。 如何评论 文章底部的“评论”区域使用 giscus。 giscus 的作用是把 github discussions 嵌入到静态网页中： 当前配置： 因为当前网页是 spa，切换文章时浏览器 pathname 不变，所以不能用 pathname 做 discussion 映射。 当前使用 specific 映射，并由前端按文章生成 term： 例如： 这样每篇文章都有独立的 discussion。 评论适合用于： - 讨论文章观点 - 补充背景 - 读者交流 - 非必须处理的留言 如何反馈问题 如果文章内容缺失、不准确、过时或需要修改，应该使用内容反馈，而不是普通评论。 网页端提供三种反馈入口： - 反馈本文问题：针对整篇文章。 - 反馈此段：针对某个段落。 - 反馈选中文字：针对选中的原文。 这些入口都会打开 github 新建 issue 页面，并预填： - 文档标题 - markdown 路径 - 位置 - 原文 - 问题说明模板 - 期望修改模板 - content-feedback label 反馈 issue 的模板在： 反馈适合用于： - 指出事实错误。 - 补充缺失概念。 - 标记过时内容。 - 建议改写不清楚的段落。 - 给后续 ai 自动修复提供结构化输入。 评论和反馈的区别 | 类型 | 存储位置 | 适合内容 | 是否需要处理 | | --- | --- | --- | --- | | 评论 | github discussions | 讨论、补充、交流 | 不一定 | | 反馈 | github issues | 缺失、错误、过时、待修改 | 是 | 简单判断： - 想讨论：用评论。 - 想推动修改：用反馈。 后续 ai 修复闭环 后续可以基于 content-feedback issue 建立自动修复流程： 第一版已经完成的是反馈数据入口和 github 存储。ai 自动校验、自动修改、飞书通知和自动关闭反馈 issue 属于下一阶段。 关联 - 工具与效率 - superpowers 到 codex 的子 agent 编排链路"
   },
   {
     "id": "content/travel/index",
@@ -701,7 +791,8 @@ export const knowledgeModules: KnowledgeModule[] = [
         "id": "tools",
         "label": "工具与效率",
         "docs": [
-          "content/tech/tools/index"
+          "content/tech/tools/index",
+          "content/tech/tools/knowledge-base-workflow"
         ]
       },
       {
@@ -1125,9 +1216,100 @@ export const knowledgeChunks: KnowledgeChunk[] = [
   {
     "id": "content/tech/tools/index::2",
     "docId": "content/tech/tools/index",
-    "heading": "章节",
-    "text": "暂无。",
-    "searchText": "工具与效率 章节 暂无。"
+    "heading": "笔记",
+    "text": "- 知识库使用与反馈流程",
+    "searchText": "工具与效率 笔记 - 知识库使用与反馈流程"
+  },
+  {
+    "id": "content/tech/tools/knowledge-base-workflow::1",
+    "docId": "content/tech/tools/knowledge-base-workflow",
+    "heading": "核心结论",
+    "text": "当前知识库是一个基于 Markdown、GitHub 和静态前端的个人知识系统。 内容存储在 Git 仓库中，网页端通过构建脚本生成搜索索引和导航数据；读者可以搜索知识、查看相关知识、在文章底部评论，也可以对整篇文章、某个段落或选中文字提交 GitHub Issue 反馈。 这个设计把不同类型的互动分开： - 普通讨论走 GitHub Discussions / giscus。 - 内容缺失、错误、过时等可处理反馈走 GitHub Issues。 - 内容修复仍然通过 Pull Request 和 review 合并。",
+    "searchText": "知识库使用与反馈流程 核心结论 当前知识库是一个基于 markdown、github 和静态前端的个人知识系统。 内容存储在 git 仓库中，网页端通过构建脚本生成搜索索引和导航数据；读者可以搜索知识、查看相关知识、在文章底部评论，也可以对整篇文章、某个段落或选中文字提交 github issue 反馈。 这个设计把不同类型的互动分开： - 普通讨论走 github discussions / giscus。 - 内容缺失、错误、过时等可处理反馈走 github issues。 - 内容修复仍然通过 pull request 和 review 合并。"
+  },
+  {
+    "id": "content/tech/tools/knowledge-base-workflow::2",
+    "docId": "content/tech/tools/knowledge-base-workflow",
+    "heading": "存储结构",
+    "text": "知识内容以 Markdown 文件存储在仓库中。 主要目录： 内容组织采用两层分类： 例如： 表示： - module：tech - section：tools - note：knowledge-base-workflow 新增笔记时，需要同步更新对应章节的 index.md，让网页导航能展示出来。",
+    "searchText": "知识库使用与反馈流程 存储结构 知识内容以 markdown 文件存储在仓库中。 主要目录： 内容组织采用两层分类： 例如： 表示： - module：tech - section：tools - note：knowledge-base-workflow 新增笔记时，需要同步更新对应章节的 index.md，让网页导航能展示出来。"
+  },
+  {
+    "id": "content/tech/tools/knowledge-base-workflow::3",
+    "docId": "content/tech/tools/knowledge-base-workflow",
+    "heading": "构建流程",
+    "text": "网页端在构建时读取 Markdown 内容，并生成静态数据文件： 构建命令： 测试命令： 构建不会把评论或反馈写回 Markdown。评论和反馈分别存储在 GitHub Discussions 和 GitHub Issues 中。",
+    "searchText": "知识库使用与反馈流程 构建流程 网页端在构建时读取 markdown 内容，并生成静态数据文件： 构建命令： 测试命令： 构建不会把评论或反馈写回 markdown。评论和反馈分别存储在 github discussions 和 github issues 中。"
+  },
+  {
+    "id": "content/tech/tools/knowledge-base-workflow::4",
+    "docId": "content/tech/tools/knowledge-base-workflow",
+    "heading": "如何搜索知识",
+    "text": "网页顶部提供全文搜索。 搜索数据来自每篇文档的： - 标题 - 文件路径 - 模块和章节名 - tags - Markdown 正文 - 按标题切分的正文 chunk 搜索逻辑在： 搜索结果会显示： - 匹配文档标题 - 所属模块和章节 - 命中的正文片段 - 匹配关键词高亮 文章内选中文字时，也会触发一次本地搜索，用选中的文本查找相关知识点。",
+    "searchText": "知识库使用与反馈流程 如何搜索知识 网页顶部提供全文搜索。 搜索数据来自每篇文档的： - 标题 - 文件路径 - 模块和章节名 - tags - markdown 正文 - 按标题切分的正文 chunk 搜索逻辑在： 搜索结果会显示： - 匹配文档标题 - 所属模块和章节 - 命中的正文片段 - 匹配关键词高亮 文章内选中文字时，也会触发一次本地搜索，用选中的文本查找相关知识点。"
+  },
+  {
+    "id": "content/tech/tools/knowledge-base-workflow::5",
+    "docId": "content/tech/tools/knowledge-base-workflow",
+    "heading": "如何关联知识",
+    "text": "知识关联分两类：手动关联和运行时自动关联。",
+    "searchText": "知识库使用与反馈流程 如何关联知识 知识关联分两类：手动关联和运行时自动关联。"
+  },
+  {
+    "id": "content/tech/tools/knowledge-base-workflow::6",
+    "docId": "content/tech/tools/knowledge-base-workflow",
+    "heading": "手动关联",
+    "text": "在 Markdown 文章末尾添加 ## 关联 章节： ```markdown",
+    "searchText": "知识库使用与反馈流程 手动关联 在 markdown 文章末尾添加 ## 关联 章节： ```markdown"
+  },
+  {
+    "id": "content/tech/tools/knowledge-base-workflow::7",
+    "docId": "content/tech/tools/knowledge-base-workflow",
+    "heading": "关联",
+    "text": "- AI - 工具与效率 ``` 手动关联优先级最高。网页端会解析这些链接，并优先展示到文章底部的“相关知识”区域。",
+    "searchText": "知识库使用与反馈流程 关联 - ai - 工具与效率 ``` 手动关联优先级最高。网页端会解析这些链接，并优先展示到文章底部的“相关知识”区域。"
+  },
+  {
+    "id": "content/tech/tools/knowledge-base-workflow::8",
+    "docId": "content/tech/tools/knowledge-base-workflow",
+    "heading": "运行时自动关联",
+    "text": "如果手动关联不足，前端会基于当前文档自动补充相关内容。 自动关联会参考： - title - tags - 二级和三级标题 - 正文中的问题式句子 - 本地搜索结果 自动关联在浏览器运行时计算，不再依赖构建期生成的 relatedDocIds。",
+    "searchText": "知识库使用与反馈流程 运行时自动关联 如果手动关联不足，前端会基于当前文档自动补充相关内容。 自动关联会参考： - title - tags - 二级和三级标题 - 正文中的问题式句子 - 本地搜索结果 自动关联在浏览器运行时计算，不再依赖构建期生成的 relateddocids。"
+  },
+  {
+    "id": "content/tech/tools/knowledge-base-workflow::9",
+    "docId": "content/tech/tools/knowledge-base-workflow",
+    "heading": "如何评论",
+    "text": "文章底部的“评论”区域使用 giscus。 giscus 的作用是把 GitHub Discussions 嵌入到静态网页中： 当前配置： 因为当前网页是 SPA，切换文章时浏览器 pathname 不变，所以不能用 pathname 做 discussion 映射。 当前使用 specific 映射，并由前端按文章生成 term： 例如： 这样每篇文章都有独立的 Discussion。 评论适合用于： - 讨论文章观点 - 补充背景 - 读者交流 - 非必须处理的留言",
+    "searchText": "知识库使用与反馈流程 如何评论 文章底部的“评论”区域使用 giscus。 giscus 的作用是把 github discussions 嵌入到静态网页中： 当前配置： 因为当前网页是 spa，切换文章时浏览器 pathname 不变，所以不能用 pathname 做 discussion 映射。 当前使用 specific 映射，并由前端按文章生成 term： 例如： 这样每篇文章都有独立的 discussion。 评论适合用于： - 讨论文章观点 - 补充背景 - 读者交流 - 非必须处理的留言"
+  },
+  {
+    "id": "content/tech/tools/knowledge-base-workflow::10",
+    "docId": "content/tech/tools/knowledge-base-workflow",
+    "heading": "如何反馈问题",
+    "text": "如果文章内容缺失、不准确、过时或需要修改，应该使用内容反馈，而不是普通评论。 网页端提供三种反馈入口： - 反馈本文问题：针对整篇文章。 - 反馈此段：针对某个段落。 - 反馈选中文字：针对选中的原文。 这些入口都会打开 GitHub 新建 Issue 页面，并预填： - 文档标题 - Markdown 路径 - 位置 - 原文 - 问题说明模板 - 期望修改模板 - content-feedback label 反馈 Issue 的模板在： 反馈适合用于： - 指出事实错误。 - 补充缺失概念。 - 标记过时内容。 - 建议改写不清楚的段落。 - 给后续 AI 自动修复提供结构化输入。",
+    "searchText": "知识库使用与反馈流程 如何反馈问题 如果文章内容缺失、不准确、过时或需要修改，应该使用内容反馈，而不是普通评论。 网页端提供三种反馈入口： - 反馈本文问题：针对整篇文章。 - 反馈此段：针对某个段落。 - 反馈选中文字：针对选中的原文。 这些入口都会打开 github 新建 issue 页面，并预填： - 文档标题 - markdown 路径 - 位置 - 原文 - 问题说明模板 - 期望修改模板 - content-feedback label 反馈 issue 的模板在： 反馈适合用于： - 指出事实错误。 - 补充缺失概念。 - 标记过时内容。 - 建议改写不清楚的段落。 - 给后续 ai 自动修复提供结构化输入。"
+  },
+  {
+    "id": "content/tech/tools/knowledge-base-workflow::11",
+    "docId": "content/tech/tools/knowledge-base-workflow",
+    "heading": "评论和反馈的区别",
+    "text": "| 类型 | 存储位置 | 适合内容 | 是否需要处理 | | --- | --- | --- | --- | | 评论 | GitHub Discussions | 讨论、补充、交流 | 不一定 | | 反馈 | GitHub Issues | 缺失、错误、过时、待修改 | 是 | 简单判断： - 想讨论：用评论。 - 想推动修改：用反馈。",
+    "searchText": "知识库使用与反馈流程 评论和反馈的区别 | 类型 | 存储位置 | 适合内容 | 是否需要处理 | | --- | --- | --- | --- | | 评论 | github discussions | 讨论、补充、交流 | 不一定 | | 反馈 | github issues | 缺失、错误、过时、待修改 | 是 | 简单判断： - 想讨论：用评论。 - 想推动修改：用反馈。"
+  },
+  {
+    "id": "content/tech/tools/knowledge-base-workflow::12",
+    "docId": "content/tech/tools/knowledge-base-workflow",
+    "heading": "后续 AI 修复闭环",
+    "text": "后续可以基于 content-feedback Issue 建立自动修复流程： 第一版已经完成的是反馈数据入口和 GitHub 存储。AI 自动校验、自动修改、飞书通知和自动关闭反馈 Issue 属于下一阶段。",
+    "searchText": "知识库使用与反馈流程 后续 ai 修复闭环 后续可以基于 content-feedback issue 建立自动修复流程： 第一版已经完成的是反馈数据入口和 github 存储。ai 自动校验、自动修改、飞书通知和自动关闭反馈 issue 属于下一阶段。"
+  },
+  {
+    "id": "content/tech/tools/knowledge-base-workflow::13",
+    "docId": "content/tech/tools/knowledge-base-workflow",
+    "heading": "关联",
+    "text": "- 工具与效率 - Superpowers 到 Codex 的子 agent 编排链路",
+    "searchText": "知识库使用与反馈流程 关联 - 工具与效率 - superpowers 到 codex 的子 agent 编排链路"
   },
   {
     "id": "content/travel/index::1",
