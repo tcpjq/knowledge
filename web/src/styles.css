@@ -505,6 +505,54 @@ mark {
   overflow-wrap: anywhere;
 }
 
+.article-comments {
+  border-top: 1px solid #dfe3e8;
+  margin-top: 34px;
+  padding-top: 22px;
+}
+
+.article-comments-heading {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.article-comments-heading h2 {
+  color: #101820;
+  font-size: 20px;
+  margin: 0;
+}
+
+.article-comments-heading a {
+  color: #1b5eaa;
+  font-size: 13px;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.comments-setup {
+  background: #fff8df;
+  border: 1px solid #ecd58a;
+  border-radius: 8px;
+  color: #604a00;
+  font-size: 14px;
+  margin: 0;
+  padding: 12px 14px;
+}
+
+.comments-setup code {
+  background: rgba(96, 74, 0, 0.12);
+  border-radius: 5px;
+  padding: 2px 5px;
+}
+
+.giscus,
+.giscus-frame {
+  width: 100%;
+}
+
 .selection-popover {
   background: #ffffff;
   border: 1px solid #cfd6df;

@@ -6,9 +6,10 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "generate": "node scripts/generate-knowledge-data.mjs",
+    "test:giscus": "tsc --module NodeNext --moduleResolution NodeNext --target ES2022 --strict --esModuleInterop --skipLibCheck --outDir /tmp/knowledge-web-giscus-tests src/giscus.ts tests/giscus.test.ts && node /tmp/knowledge-web-giscus-tests/tests/giscus.test.js",
     "test:navigation": "tsc --module NodeNext --moduleResolution NodeNext --target ES2022 --strict --esModuleInterop --skipLibCheck --outDir /tmp/knowledge-web-tests src/navigation.ts tests/navigation.test.ts && node /tmp/knowledge-web-tests/tests/navigation.test.js",
     "test:search": "tsc --module NodeNext --moduleResolution NodeNext --target ES2022 --strict --esModuleInterop --skipLibCheck --outDir /tmp/knowledge-web-search-tests src/search.ts tests/search.test.ts && node /tmp/knowledge-web-search-tests/tests/search.test.js",
-    "test": "npm run test:search && npm run test:navigation",
+    "test": "npm run test:giscus && npm run test:search && npm run test:navigation",
     "build": "npm run generate && tsc --noEmit && vite build",
     "preview": "vite preview --host 0.0.0.0"
   },

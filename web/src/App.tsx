@@ -6,6 +6,12 @@ import {
   type Heading,
   type KnowledgeDoc,
 } from './generated/knowledge-data';
+import {
+  baseGiscusConfig,
+  buildGiscusAttributes,
+  isGiscusConfigured,
+  type GiscusConfig,
+} from './giscus';
 import { flattenDocIds, getAdjacentDocIds, getDefaultExpandedSections } from './navigation';
 import {
   findRuntimeRelatedKnowledge,
@@ -17,6 +23,11 @@ import {
 } from './search';
 
 const docById = new Map(knowledgeDocs.map((doc) => [doc.id, doc]));
+const giscusConfig: GiscusConfig = {
+  ...baseGiscusConfig,
+  category: import.meta.env.VITE_GISCUS_CATEGORY || 'General',
+  categoryId: import.meta.env.VITE_GISCUS_CATEGORY_ID || '',
+};
 
 function escapeHtml(value: string) {
   return value
@@ -252,6 +263,47 @@ function RelatedKnowledge({
           </button>
         ))}
       </div>
+    </section>
+  );
+}
+
+function GiscusComments({ doc }: { doc: KnowledgeDoc }) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const configured = isGiscusConfigured(giscusConfig);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return undefined;
+
+    container.innerHTML = '';
+    if (!configured) return undefined;
+
+    const script = document.createElement('script');
+    const attributes = buildGiscusAttributes(giscusConfig, doc.id);
+    for (const [name, value] of Object.entries(attributes)) {
+      script.setAttribute(name, value);
+    }
+    container.appendChild(script);
+
+    return () => {
+      container.innerHTML = '';
+    };
+  }, [configured, doc.id]);
+
+  return (
+    <section className="article-comments" aria-label="文章评论">
+      <div className="article-comments-heading">
+        <h2>评论</h2>
+        <a href="https://github.com/tcpjq/knowledge/discussions" rel="noreferrer" target="_blank">
+          GitHub Discussions
+        </a>
+      </div>
+      {!configured ? (
+        <p className="comments-setup">
+          评论区需要开启 GitHub Discussions，并设置 <code>VITE_GISCUS_CATEGORY_ID</code> 后生效。
+        </p>
+      ) : null}
+      <div className="giscus" ref={containerRef} />
     </section>
   );
 }
@@ -675,6 +727,7 @@ export default function App() {
           </div>
           <div className="markdown-body">{renderMarkdown(selectedDoc.body)}</div>
           <RelatedKnowledge docs={relatedDocs} onSelect={selectDoc} />
+          <GiscusComments doc={selectedDoc} />
           {(previousDoc || nextDoc) ? (
             <nav className="article-nav" aria-label="上一篇和下一篇">
               {previousDoc ? (
