@@ -400,6 +400,13 @@ function normalizeSelectionText(value: string) {
   return value.replace(/\s+/g, ' ').trim();
 }
 
+function isMeaningfulSelectionText(value: string) {
+  if (!value || value.length > 120) return false;
+  if ((value.match(/\p{Script=Han}/gu) ?? []).length >= 2) return true;
+  if ((value.match(/[a-z0-9]/gi) ?? []).length >= 3) return true;
+  return false;
+}
+
 export function searchSelectionKnowledge<TDoc extends SearchDoc>({
   selectedText,
   currentDocId,
@@ -416,7 +423,7 @@ export function searchSelectionKnowledge<TDoc extends SearchDoc>({
   limit?: number;
 }) {
   const normalized = normalizeSelectionText(selectedText);
-  if (normalized.length < 4 || normalized.length > 120) return [];
+  if (!isMeaningfulSelectionText(normalized)) return [];
 
   return searchKnowledge({
     query: normalized,

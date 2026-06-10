@@ -79,7 +79,7 @@ Manual links should outrank automatic results even if their text score is lower,
 When the user selects text inside the article body:
 
 - Trim whitespace and normalize internal whitespace.
-- Ignore selections shorter than 4 characters or longer than 120 characters.
+- Ignore empty/whitespace selections, selections longer than 120 characters, single CJK characters, and ASCII/alphanumeric selections shorter than 3 characters; allow selections with at least 2 CJK characters or at least 3 ASCII/alphanumeric characters.
 - Run a local query against existing docs/chunks.
 - Exclude the currently open document.
 - Show up to 5 results, preferring chunk-level matches.

@@ -36,6 +36,17 @@ const docs: SearchDoc[] = [
     tags: [],
     searchText: '沟通 表达 反馈 架构化表达',
   },
+  {
+    id: 'content/tech/api/index',
+    title: 'API 设计',
+    path: 'content/tech/api/index.md',
+    module: 'tech',
+    moduleLabel: '技术',
+    section: 'api',
+    sectionLabel: 'API',
+    tags: ['api'],
+    searchText: 'api 设计 接口契约',
+  },
 ];
 
 const chunks: SearchChunk[] = [
@@ -171,4 +182,28 @@ assertEqual(
   }),
   [],
   'selection search ignores very short selections',
+);
+
+assertEqual(
+  searchSelectionKnowledge({
+    selectedText: '架构',
+    currentDocId: 'content/tech/architecture/what-is-architecture',
+    docs,
+    chunks,
+    modules,
+  }).map((result) => result.doc.id),
+  ['content/communication/index'],
+  'selection search allows two-character CJK selections',
+);
+
+assertEqual(
+  searchSelectionKnowledge({
+    selectedText: 'API',
+    currentDocId: 'content/tech/architecture/what-is-architecture',
+    docs,
+    chunks,
+    modules,
+  }).map((result) => result.doc.id),
+  ['content/tech/api/index'],
+  'selection search allows three-character ASCII acronyms',
 );
