@@ -355,10 +355,16 @@ function GiscusComments({ doc }: { doc: KnowledgeDoc }) {
 
 type SelectionPopoverState = {
   text: string;
+  context: string;
   top: number;
   left: number;
   results: SearchResult<KnowledgeDoc>[];
 };
+
+function findSelectionContext(element: Element) {
+  const contextElement = element.closest('p, li, blockquote, pre') ?? element;
+  return contextElement.textContent?.replace(/\s+/g, ' ').trim() ?? '';
+}
 
 function SelectionKnowledgePopover({
   state,
@@ -367,7 +373,7 @@ function SelectionKnowledgePopover({
 }: {
   state: SelectionPopoverState | null;
   onSelect: (doc: KnowledgeDoc) => void;
-  onFeedback: (selectedText: string) => void;
+  onFeedback: (state: Pick<SelectionPopoverState, 'text' | 'context'>) => void;
 }) {
   if (!state) return null;
 
@@ -381,7 +387,7 @@ function SelectionKnowledgePopover({
         <span>相关知识点</span>
         <small>{state.text}</small>
       </div>
-      <button className="selection-feedback-button" onClick={() => onFeedback(state.text)} type="button">
+      <button className="selection-feedback-button" onClick={() => onFeedback(state)} type="button">
         反馈选中文字
       </button>
       {state.results.length > 0 ? (
@@ -509,10 +515,10 @@ export default function App() {
     selectDoc(doc);
   };
 
-  const openSelectionFeedback = (selectedText: string) => {
+  const openSelectionFeedback = (state: Pick<SelectionPopoverState, 'text' | 'context'>) => {
     setSelectionPopover(null);
     window.getSelection()?.removeAllRanges();
-    openContentFeedback(buildSelectedTextFeedbackTarget(selectedDoc, selectedText));
+    openContentFeedback(buildSelectedTextFeedbackTarget(selectedDoc, state.text, state.context));
   };
 
   const openDocFeedback = () => {
@@ -597,7 +603,8 @@ export default function App() {
         belowTop + popoverHeight <= viewportBottom
           ? belowTop
           : Math.max(window.scrollY + 16, aboveTop);
-      setSelectionPopover({ text: selectedText, top, left, results });
+      const context = containerElement instanceof Element ? findSelectionContext(containerElement) : selectedText;
+      setSelectionPopover({ text: selectedText, context, top, left, results });
     };
 
     const handleMouseUp = () => window.setTimeout(handleSelection, 0);

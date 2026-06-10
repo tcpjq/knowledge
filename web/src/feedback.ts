@@ -54,11 +54,34 @@ export function buildContentFeedbackIssueUrl(target: ContentFeedbackTarget) {
 export function buildSelectedTextFeedbackTarget(
   doc: FeedbackDocument,
   selectedText: string,
+  context?: string,
 ): ContentFeedbackTarget {
+  const normalizedSelectedText = selectedText.replace(/\s+/g, ' ').trim();
+  const quote = context
+    ? markSelectedTextInContext(context, normalizedSelectedText)
+    : normalizedSelectedText;
+
   return {
     docId: doc.id,
     docTitle: doc.title,
     docPath: doc.path,
-    quote: selectedText.replace(/\s+/g, ' ').trim(),
+    quote,
   };
+}
+
+export function markSelectedTextInContext(context: string, selectedText: string) {
+  const normalizedContext = context.replace(/\s+/g, ' ').trim();
+  const normalizedSelectedText = selectedText.replace(/\s+/g, ' ').trim();
+  if (!normalizedSelectedText) return normalizedContext;
+
+  const index = normalizedContext.indexOf(normalizedSelectedText);
+  if (index === -1) {
+    return `${normalizedContext}\n\n选中内容：==${normalizedSelectedText}==`;
+  }
+
+  return [
+    normalizedContext.slice(0, index),
+    `==${normalizedSelectedText}==`,
+    normalizedContext.slice(index + normalizedSelectedText.length),
+  ].join('');
 }

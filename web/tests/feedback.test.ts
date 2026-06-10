@@ -3,6 +3,7 @@ import {
   buildContentFeedbackIssueUrl,
   buildFeedbackLocation,
   buildSelectedTextFeedbackTarget,
+  markSelectedTextInContext,
   type ContentFeedbackTarget,
 } from '../src/feedback.js';
 
@@ -69,6 +70,24 @@ assertEqual(
 assertEqual(url.searchParams.get('body'), buildContentFeedbackBody(target), 'prefills the issue body');
 
 assertEqual(
+  markSelectedTextInContext(
+    '目标不是当场理解每一个细节，而是持续抓住主线。',
+    '理解每一个细节',
+  ),
+  '目标不是当场==理解每一个细节==，而是持续抓住主线。',
+  'marks the selected text inside surrounding context',
+);
+
+assertEqual(
+  markSelectedTextInContext(
+    '目标不是当场理解每一个细节，而是持续抓住主线。',
+    '没有出现在上下文中',
+  ),
+  '目标不是当场理解每一个细节，而是持续抓住主线。\n\n选中内容：==没有出现在上下文中==',
+  'keeps selected text visible when it cannot be found in context',
+);
+
+assertEqual(
   buildSelectedTextFeedbackTarget(
     {
       id: 'content/communication/effective-participation-in-design-review',
@@ -76,12 +95,13 @@ assertEqual(
       path: 'content/communication/effective-participation-in-design-review.md',
     },
     '这里的判断依据需要补充',
+    '前文铺垫。这里的判断依据需要补充。后文建议。',
   ),
   {
     docId: 'content/communication/effective-participation-in-design-review',
     docTitle: '高效参与方案评审',
     docPath: 'content/communication/effective-participation-in-design-review.md',
-    quote: '这里的判断依据需要补充',
+    quote: '前文铺垫。==这里的判断依据需要补充==。后文建议。',
   },
-  'selected text feedback target carries the selected quote and document identity',
+  'selected text feedback target carries surrounding context and marks the selected quote',
 );
