@@ -30,6 +30,14 @@ if [[ "$AGENT_PROVIDER" == "codex" ]]; then
   require_command codex
 fi
 
+next_feedback_issue_number() {
+  gh api -X GET "repos/$REPO_FULL_NAME/issues" \
+    -f state=open \
+    -f labels=content-feedback \
+    -f per_page=20 \
+    --jq "map(select(([.labels[].name] | index(\"$BLOCKED_LABEL\")) | not)) | .[0].number // empty"
+}
+
 cd "$REPO_DIR"
 git fetch origin "$BASE_BRANCH"
 
@@ -39,9 +47,8 @@ gh label create "$BLOCKED_LABEL" \
   --description "Content feedback issue needs human clarification before AI processing" \
   >/dev/null 2>&1 || true
 
-OPEN_FEEDBACK_QUERY="is:issue is:open label:content-feedback -label:$BLOCKED_LABEL"
-OPEN_FEEDBACK_COUNT="$(gh issue list --repo "$REPO_FULL_NAME" --search "$OPEN_FEEDBACK_QUERY" --limit 1 --json number --jq 'length')"
-if [[ "$OPEN_FEEDBACK_COUNT" == "0" ]]; then
+NEXT_FEEDBACK_ISSUE_NUMBER="$(next_feedback_issue_number)"
+if [[ -z "$NEXT_FEEDBACK_ISSUE_NUMBER" ]]; then
   echo "No open content-feedback issue. Skipping Codex run."
   exit 0
 fi
@@ -72,7 +79,7 @@ PROVIDER_STATUS=$?
 set -e
 
 if [[ ! -f .agent/content-feedback-result.json ]]; then
-  ISSUE_NUMBER="$(gh issue list --repo "$REPO_FULL_NAME" --search "$OPEN_FEEDBACK_QUERY" --limit 1 --json number --jq '.[0].number // empty')"
+  ISSUE_NUMBER="$(next_feedback_issue_number)"
   if [[ -n "$ISSUE_NUMBER" ]]; then
     ISSUE_URL="https://github.com/$REPO_FULL_NAME/issues/$ISSUE_NUMBER"
     cat > .agent/content-feedback-result.json <<JSON
