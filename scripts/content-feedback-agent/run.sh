@@ -154,7 +154,19 @@ if [[ "$STATUS" == "blocked" ]]; then
   SUMMARY="$(node -e "const r=JSON.parse(process.argv[1]); console.log(r.summary || 'Blocked')" "$RESULT_JSON")"
   if [[ -n "$ISSUE_NUMBER" ]]; then
     add_issue_label "$ISSUE_NUMBER" "$BLOCKED_LABEL" || true
-    add_issue_comment "$ISSUE_NUMBER" "AI content feedback agent is blocked: $SUMMARY"
+    add_issue_comment "$ISSUE_NUMBER" "$(cat <<COMMENT
+AI content feedback agent needs more information before it can safely update the knowledge base.
+
+$SUMMARY
+
+请直接编辑当前 issue，补充：
+
+- 「问题说明」：具体哪里缺失、不准确、过时或表达不清。
+- 「期望修改」：希望补充什么内容，或希望把原文改成什么。
+
+补充完成后，请移除 \`$BLOCKED_LABEL\` 标签。下一轮定时检测会重新处理这个 issue。
+COMMENT
+)"
   fi
   exit 0
 fi

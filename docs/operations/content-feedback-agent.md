@@ -54,7 +54,7 @@ Optional env:
 BLOCKED_LABEL=content-feedback-blocked
 ```
 
-Issues with `content-feedback-blocked` are skipped by the next scheduled scan. The runner adds this label when an issue cannot be safely handled without human clarification, or when the AI provider exits without a valid result file.
+Issues with `content-feedback-blocked` are skipped by the next scheduled scan. The label means "needs more information"; it is not a permanent rejection. The runner adds this label when an issue cannot be safely handled without human clarification, or when the AI provider exits without a valid result file. After the reporter edits the same issue with clearer `问题说明` and `期望修改`, remove the label so the next scheduled scan can process it again.
 
 `CODEX_BYPASS_SANDBOX=1` is recommended for a personal server when Codex runs inside a systemd service and the host does not allow the nested bubblewrap sandbox to create writable user namespaces. The outer runner still isolates work in a temporary git worktree, validates allowed changed paths, runs verification, and opens a PR instead of merging directly.
 

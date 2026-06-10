@@ -4,7 +4,7 @@ module: tech
 section: tools
 tags: [knowledge-base, github, giscus, search, feedback]
 created: 2026-06-10
-updated: 2026-06-10
+updated: 2026-06-11
 status: stable
 ---
 
@@ -230,6 +230,17 @@ knowledge:content/tech/tools/knowledge-base-workflow
 - 标记过时内容。
 - 建议改写不清楚的段落。
 - 给后续 AI 自动修复提供结构化输入。
+
+如果 AI 判断反馈信息不足，会给 Issue 加上 `content-feedback-blocked` 标签并评论说明缺少什么。
+
+这个标签表示“待补充信息”，不是永久拒绝。处理方式是：
+
+1. 直接编辑同一个 Issue。
+2. 补充 `问题说明`，说明具体哪里不对、缺失、过时或表达不清。
+3. 补充 `期望修改`，说明希望补充什么，或希望把原文改成什么。
+4. 移除 `content-feedback-blocked` 标签。
+
+下一轮定时检测会重新处理这个 Issue。
 
 ## 评论和反馈的区别
 

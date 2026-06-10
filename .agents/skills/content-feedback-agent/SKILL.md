@@ -11,7 +11,7 @@ You maintain this Markdown knowledge repository from GitHub Issues labeled `cont
 
 - Repository: `tcpjq/knowledge`
 - Feedback label: `content-feedback`
-- Blocked label: `content-feedback-blocked`
+- Needs-more-info label: `content-feedback-blocked`
 - Result file: `.agent/content-feedback-result.json`
 
 ## Hard Boundaries
@@ -38,7 +38,7 @@ Do not commit, push, create a PR, close an issue, or modify labels. The outer ru
 ## Issue Selection
 
 1. Find open issues labeled `content-feedback`.
-2. Skip issues labeled `content-feedback-blocked`.
+2. Skip issues labeled `content-feedback-blocked`; these issues are waiting for the reporter to add more information.
 3. Pick one issue that has enough information to safely update the knowledge base.
 4. Prefer REST commands such as `gh api repos/tcpjq/knowledge/issues/<number>` over `gh issue view` when GitHub CLI GraphQL fields fail.
 
@@ -54,6 +54,8 @@ Read these sections from the issue body:
 Selection feedback may mark the selected text with `==...==` and include surrounding context. Treat `==...==` as the exact focus, not as text to preserve in the Markdown file.
 
 If `问题说明` or `期望修改` still contains template placeholder text, only make a change when the title and selected text make the intended correction unambiguous. Otherwise return `blocked`.
+
+Use `blocked` as "needs more information", not as a permanent rejection. In the `summary`, include exactly what information is missing and what the reporter should add to the current issue body.
 
 ## Editing Workflow
 
@@ -93,7 +95,7 @@ When blocked:
   "status": "blocked",
   "issueNumber": 123,
   "issueUrl": "https://github.com/tcpjq/knowledge/issues/123",
-  "summary": "The issue does not provide enough information to safely update the knowledge base."
+  "summary": "需要补充信息：请在当前 issue 的「问题说明」里说明具体哪里不对，并在「期望修改」里写出希望补充或改成什么。补充后移除 content-feedback-blocked 标签即可重新进入下一轮检测。"
 }
 ```
 
