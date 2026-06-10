@@ -6,7 +6,11 @@ import {
   type Heading,
   type KnowledgeDoc,
 } from './generated/knowledge-data';
-import { buildContentFeedbackIssueUrl, type ContentFeedbackTarget } from './feedback';
+import {
+  buildContentFeedbackIssueUrl,
+  buildSelectedTextFeedbackTarget,
+  type ContentFeedbackTarget,
+} from './feedback';
 import {
   baseGiscusConfig,
   buildGiscusAttributes,
@@ -358,11 +362,13 @@ type SelectionPopoverState = {
 function SelectionKnowledgePopover({
   state,
   onSelect,
+  onFeedback,
 }: {
   state: SelectionPopoverState | null;
   onSelect: (doc: KnowledgeDoc) => void;
+  onFeedback: (selectedText: string) => void;
 }) {
-  if (!state || state.results.length === 0) return null;
+  if (!state) return null;
 
   return (
     <aside
@@ -374,23 +380,30 @@ function SelectionKnowledgePopover({
         <span>相关知识点</span>
         <small>{state.text}</small>
       </div>
-      <div className="selection-result-list">
-        {state.results.map((result) => (
-          <button
-            className="selection-result"
-            key={`${result.doc.id}-${result.chunk?.id ?? 'doc'}`}
-            onClick={() => onSelect(result.doc)}
-            type="button"
-          >
-            <strong>{result.doc.title}</strong>
-            <span>
-              {result.doc.moduleLabel} / {result.doc.sectionLabel}
-              {result.chunk ? ` / ${result.chunk.heading}` : ''}
-            </span>
-            <small>{result.snippet}</small>
-          </button>
-        ))}
-      </div>
+      <button className="selection-feedback-button" onClick={() => onFeedback(state.text)} type="button">
+        反馈选中文字
+      </button>
+      {state.results.length > 0 ? (
+        <div className="selection-result-list">
+          {state.results.map((result) => (
+            <button
+              className="selection-result"
+              key={`${result.doc.id}-${result.chunk?.id ?? 'doc'}`}
+              onClick={() => onSelect(result.doc)}
+              type="button"
+            >
+              <strong>{result.doc.title}</strong>
+              <span>
+                {result.doc.moduleLabel} / {result.doc.sectionLabel}
+                {result.chunk ? ` / ${result.chunk.heading}` : ''}
+              </span>
+              <small>{result.snippet}</small>
+            </button>
+          ))}
+        </div>
+      ) : (
+        <p className="selection-empty">没有匹配的相关知识。</p>
+      )}
     </aside>
   );
 }
@@ -489,6 +502,12 @@ export default function App() {
     selectDoc(doc);
   };
 
+  const openSelectionFeedback = (selectedText: string) => {
+    setSelectionPopover(null);
+    window.getSelection()?.removeAllRanges();
+    openContentFeedback(buildSelectedTextFeedbackTarget(selectedDoc, selectedText));
+  };
+
   const openDocFeedback = () => {
     openContentFeedback({
       docId: selectedDoc.id,
@@ -544,11 +563,6 @@ export default function App() {
         chunks: knowledgeChunks,
         modules: knowledgeModules,
       });
-
-      if (results.length === 0) {
-        closePopover();
-        return;
-      }
 
       const rect = range.getBoundingClientRect();
       const popoverWidth = Math.min(340, window.innerWidth - 32);
@@ -827,7 +841,11 @@ export default function App() {
         <Toc headings={selectedDoc.headings} />
       </aside>
       <div ref={popoverRef}>
-        <SelectionKnowledgePopover state={selectionPopover} onSelect={selectPopoverDoc} />
+        <SelectionKnowledgePopover
+          state={selectionPopover}
+          onFeedback={openSelectionFeedback}
+          onSelect={selectPopoverDoc}
+        />
       </div>
     </div>
   );

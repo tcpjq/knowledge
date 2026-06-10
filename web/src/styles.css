@@ -647,6 +647,30 @@ mark {
   padding: 6px;
 }
 
+.selection-feedback-button {
+  background: #ffffff;
+  border: 0;
+  border-bottom: 1px solid #dfe3e8;
+  color: #1b4d3e;
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 12px;
+  text-align: left;
+  width: 100%;
+}
+
+.selection-feedback-button:hover {
+  background: #eef3f1;
+}
+
+.selection-empty {
+  color: #657080;
+  font-size: 13px;
+  margin: 0;
+  padding: 10px 12px 12px;
+}
+
 .selection-result {
   background: transparent;
   border: 1px solid transparent;

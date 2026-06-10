@@ -6,6 +6,12 @@ export type ContentFeedbackTarget = {
   quote?: string;
 };
 
+export type FeedbackDocument = {
+  id: string;
+  title: string;
+  path: string;
+};
+
 const feedbackRepo = 'tcpjq/knowledge';
 
 export function buildFeedbackLocation(target: ContentFeedbackTarget) {
@@ -42,4 +48,16 @@ export function buildContentFeedbackIssueUrl(target: ContentFeedbackTarget) {
   url.searchParams.set('body', buildContentFeedbackBody(target));
   url.searchParams.set('labels', 'content-feedback');
   return url.toString();
+}
+
+export function buildSelectedTextFeedbackTarget(
+  doc: FeedbackDocument,
+  selectedText: string,
+): ContentFeedbackTarget {
+  return {
+    docId: doc.id,
+    docTitle: doc.title,
+    docPath: doc.path,
+    quote: selectedText.replace(/\s+/g, ' ').trim(),
+  };
 }

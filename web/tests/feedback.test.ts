@@ -2,6 +2,7 @@ import {
   buildContentFeedbackBody,
   buildContentFeedbackIssueUrl,
   buildFeedbackLocation,
+  buildSelectedTextFeedbackTarget,
   type ContentFeedbackTarget,
 } from '../src/feedback.js';
 
@@ -65,3 +66,21 @@ assertEqual(
   'prefills a reviewable issue title',
 );
 assertEqual(url.searchParams.get('body'), buildContentFeedbackBody(target), 'prefills the issue body');
+
+assertEqual(
+  buildSelectedTextFeedbackTarget(
+    {
+      id: 'content/communication/effective-participation-in-design-review',
+      title: '高效参与方案评审',
+      path: 'content/communication/effective-participation-in-design-review.md',
+    },
+    '这里的判断依据需要补充',
+  ),
+  {
+    docId: 'content/communication/effective-participation-in-design-review',
+    docTitle: '高效参与方案评审',
+    docPath: 'content/communication/effective-participation-in-design-review.md',
+    quote: '这里的判断依据需要补充',
+  },
+  'selected text feedback target carries the selected quote and document identity',
+);
