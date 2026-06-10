@@ -155,12 +155,81 @@ export const knowledgeDocs: KnowledgeDoc[] = [
       },
       {
         "level": 2,
-        "text": "章节",
-        "slug": "章节"
+        "text": "笔记",
+        "slug": "笔记"
       }
     ],
-    "body": "# AI\n\nAI 工程、Prompt、RAG、Agent、模型评估、上下文管理和 AI 应用架构。\n\n## 章节\n\n暂无。\n",
-    "searchText": "ai content/tech/ai/index.md 技术 ai ai ai 工程、prompt、rag、agent、模型评估、上下文管理和 ai 应用架构。 章节 暂无。"
+    "body": "# AI\n\nAI 工程、Prompt、RAG、Agent、模型评估、上下文管理和 AI 应用架构。\n\n## 笔记\n\n- [Superpowers 到 Codex 的子 agent 编排链路](superpowers-to-codex-subagent-workflow.md)\n",
+    "searchText": "ai content/tech/ai/index.md 技术 ai ai ai 工程、prompt、rag、agent、模型评估、上下文管理和 ai 应用架构。 笔记 - superpowers 到 codex 的子 agent 编排链路"
+  },
+  {
+    "id": "content/tech/ai/superpowers-to-codex-subagent-workflow",
+    "title": "Superpowers 到 Codex 的子 agent 编排链路",
+    "path": "content/tech/ai/superpowers-to-codex-subagent-workflow.md",
+    "module": "tech",
+    "moduleLabel": "技术",
+    "section": "ai",
+    "sectionLabel": "AI",
+    "tags": [
+      "codex",
+      "superpowers",
+      "agent",
+      "workflow"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "Superpowers 到 Codex 的子 agent 编排链路",
+        "slug": "superpowers-到-codex-的子-agent-编排链路"
+      },
+      {
+        "level": 2,
+        "text": "核心结论",
+        "slug": "核心结论"
+      },
+      {
+        "level": 2,
+        "text": "背景",
+        "slug": "背景"
+      },
+      {
+        "level": 2,
+        "text": "从 Superpowers 到 Codex 的映射",
+        "slug": "从-superpowers-到-codex-的映射"
+      },
+      {
+        "level": 2,
+        "text": "执行链路",
+        "slug": "执行链路"
+      },
+      {
+        "level": 2,
+        "text": "子 agent 是什么",
+        "slug": "子-agent-是什么"
+      },
+      {
+        "level": 2,
+        "text": "回调模型",
+        "slug": "回调模型"
+      },
+      {
+        "level": 2,
+        "text": "Superpowers 的价值",
+        "slug": "superpowers-的价值"
+      },
+      {
+        "level": 2,
+        "text": "实践判断",
+        "slug": "实践判断"
+      },
+      {
+        "level": 2,
+        "text": "关联",
+        "slug": "关联"
+      }
+    ],
+    "body": "\n# Superpowers 到 Codex 的子 agent 编排链路\n\n## 核心结论\n\nSuperpowers 不是子 agent runtime。它主要提供 workflow spec、prompt template 和跨平台工具映射；真正创建、并发执行、等待、继续和关闭子 agent 的能力来自 Codex runtime。\n\n可以把职责分成三层：\n\n```text\nSuperpowers\n  编排规则、prompt 模板、验收流程\n\n主 agent\n  解释 Superpowers 规则，并决定何时调用 Codex 工具\n\nCodex runtime\n  管理 agent thread 生命周期、并发、状态、通知、approval、sandbox 和工具调用\n```\n\n## 背景\n\nSuperpowers 的 subagent 工作流常见于两类场景：\n\n- `dispatching-parallel-agents`：把多个独立问题拆给多个子 agent 并行探索或修复。\n- `subagent-driven-development`：按计划逐个任务派发 implementer，再派 spec reviewer 和 code quality reviewer 做两阶段验收。\n\n这些 skill 文件本身是 Markdown 说明和 prompt 模板，不是后台调度器。它们告诉主 agent 什么时候派发、怎样写子任务、怎样审查结果，以及什么时候继续或回退。\n\n## 从 Superpowers 到 Codex 的映射\n\nSuperpowers 原始说明常用 Claude Code 的 `Task` 表达“派发子 agent”。在 Codex 环境里，工具映射大致是：\n\n```text\nTask tool              -> spawn_agent\nMultiple Task calls    -> multiple spawn_agent calls\nTask returns result    -> wait_agent\nTask completes cleanup -> close_agent\nTodoWrite              -> update_plan\n```\n\n因此，Superpowers 看到“dispatch subagent”时，在 Codex 中实际落到这些 runtime 工具：\n\n- `spawn_agent`：创建一个独立 agent thread，返回 agent id。\n- `wait_agent`：等待一个或多个 agent 完成，并返回 final message/status。\n- `send_input`：给已有 agent 追加指令，或打断当前任务。\n- `close_agent`：关闭已完成或不再需要的 agent thread，释放并发槽。\n\n## 执行链路\n\n一次典型链路是：\n\n```text\n用户请求\n  -> 主 agent 判断触发 Superpowers skill\n  -> 主 agent 读取 workflow 和 prompt template\n  -> skill 要求 dispatch subagent\n  -> 主 agent 调用 Codex 的 spawn_agent(prompt)\n  -> Codex runtime 创建后台 agent thread\n  -> 子 agent 独立执行自己的 model/tool loop\n  -> 主 agent 调用 wait_agent(agent_id)\n  -> Codex runtime 返回子 agent 的结果\n  -> 主 agent 根据结果决定接受、追问、修复、复审或关闭\n```\n\n这里的“监听”不是 Superpowers 自己开线程监听。更准确地说，Codex runtime 维护 agent id 到状态和结果的映射；主 agent 需要结果时调用 `wait_agent`，由 runtime 挂起等待或返回已完成结果。\n\n## 子 agent 是什么\n\nCodex 文档使用的是 **agent thread** 这个产品抽象。它不是对操作系统 thread/process 的公开承诺。\n\n可以确定的语义是：\n\n- 每个子 agent 有独立的 prompt / message history。\n- 每个子 agent 有自己的模型调用循环和工具调用流。\n- 子 agent 继承父会话的 sandbox 和 approval policy。\n- CLI 中可以通过 `/agent` 查看或切换 active agent threads。\n- 多个 agent 可以并行运行，但并行写同一批文件会带来冲突风险。\n\n不能确定的是：\n\n- 一个子 agent 是否对应一个 OS process。\n- 一个子 agent 是否对应一个 OS thread。\n- CLI、App、Cloud、app-server 是否使用完全相同的底层实现。\n\n稳定可依赖的抽象是 `agent thread`，不是进程或线程模型。\n\n## 回调模型\n\nCodex 的子 agent 结果回传更像异步任务状态机制，而不是传统代码里的 callback function：\n\n```text\nspawn_agent -> 返回 agent_id\nagent_id -> runtime 内部跟踪 running / completed / failed 等状态\nwait_agent(agent_id) -> 查询或等待状态变化\ncompleted -> runtime 把 final message/status 返回给主 agent\n```\n\n伪代码可以理解为：\n\n```ts\nconst child = runtime.spawnAgent({\n  parentThreadId,\n  prompt,\n  agentType: \"worker\",\n  inheritedConfig: {\n    cwd,\n    sandbox,\n    approvals,\n    modelDefaults,\n    skills,\n    mcpServers,\n  },\n});\n\nscheduler.runInBackground(child);\n\nconst result = await runtime.waitAgent({\n  targets: [child.id],\n  timeoutMs: 300000,\n});\n```\n\n`scheduler.runInBackground` 内部可能是 async task、worker thread、独立进程、远端 job 或混合实现。公开语义不要求用户知道这一层。\n\n## Superpowers 的价值\n\nSuperpowers 的价值不是“实现了子 agent”，而是把子 agent 的使用标准化：\n\n- 什么时候值得拆成子 agent。\n- 怎样保证子任务边界清晰。\n- 怎样避免主会话被中间日志和探索过程污染。\n- 怎样给子 agent 足够上下文，但不继承整段会话噪音。\n- 怎样做 spec compliance review 和 code quality review。\n- 怎样处理 `DONE`、`DONE_WITH_CONCERNS`、`NEEDS_CONTEXT`、`BLOCKED`。\n- 怎样避免多个子 agent 同时改同一批文件。\n\n换句话说：\n\n```text\nCodex = execution engine / agent runtime / tool system\nSuperpowers = orchestration protocol / operating manual / prompt workflow\n```\n\n## 实践判断\n\n适合用子 agent 的任务：\n\n- 多个独立问题可以并行探索。\n- 多个测试失败属于不同模块。\n- 需要一个 reviewer 从新上下文审查实现。\n- 需要把 noisy 的日志分析、代码搜索、长文档总结移出主会话。\n\n不适合用子 agent 的任务：\n\n- 根因高度相关，必须整体理解。\n- 下一步马上依赖该结果，派发只会增加等待。\n- 多个 agent 会写同一批文件。\n- 任务边界不清，子 agent 只能猜。\n\n## 关联\n\n- [AI](index.md)\n",
+    "searchText": "superpowers 到 codex 的子 agent 编排链路 content/tech/ai/superpowers-to-codex-subagent-workflow.md 技术 ai codex superpowers agent workflow superpowers 到 codex 的子 agent 编排链路 核心结论 superpowers 不是子 agent runtime。它主要提供 workflow spec、prompt template 和跨平台工具映射；真正创建、并发执行、等待、继续和关闭子 agent 的能力来自 codex runtime。 可以把职责分成三层： 背景 superpowers 的 subagent 工作流常见于两类场景： - dispatching-parallel-agents：把多个独立问题拆给多个子 agent 并行探索或修复。 - subagent-driven-development：按计划逐个任务派发 implementer，再派 spec reviewer 和 code quality reviewer 做两阶段验收。 这些 skill 文件本身是 markdown 说明和 prompt 模板，不是后台调度器。它们告诉主 agent 什么时候派发、怎样写子任务、怎样审查结果，以及什么时候继续或回退。 从 superpowers 到 codex 的映射 superpowers 原始说明常用 claude code 的 task 表达“派发子 agent”。在 codex 环境里，工具映射大致是： 因此，superpowers 看到“dispatch subagent”时，在 codex 中实际落到这些 runtime 工具： - spawnagent：创建一个独立 agent thread，返回 agent id。 - waitagent：等待一个或多个 agent 完成，并返回 final message/status。 - sendinput：给已有 agent 追加指令，或打断当前任务。 - closeagent：关闭已完成或不再需要的 agent thread，释放并发槽。 执行链路 一次典型链路是： 这里的“监听”不是 superpowers 自己开线程监听。更准确地说，codex runtime 维护 agent id 到状态和结果的映射；主 agent 需要结果时调用 waitagent，由 runtime 挂起等待或返回已完成结果。 子 agent 是什么 codex 文档使用的是 agent thread 这个产品抽象。它不是对操作系统 thread/process 的公开承诺。 可以确定的语义是： - 每个子 agent 有独立的 prompt / message history。 - 每个子 agent 有自己的模型调用循环和工具调用流。 - 子 agent 继承父会话的 sandbox 和 approval policy。 - cli 中可以通过 /agent 查看或切换 active agent threads。 - 多个 agent 可以并行运行，但并行写同一批文件会带来冲突风险。 不能确定的是： - 一个子 agent 是否对应一个 os process。 - 一个子 agent 是否对应一个 os thread。 - cli、app、cloud、app-server 是否使用完全相同的底层实现。 稳定可依赖的抽象是 agent thread，不是进程或线程模型。 回调模型 codex 的子 agent 结果回传更像异步任务状态机制，而不是传统代码里的 callback function： 伪代码可以理解为： scheduler.runinbackground 内部可能是 async task、worker thread、独立进程、远端 job 或混合实现。公开语义不要求用户知道这一层。 superpowers 的价值 superpowers 的价值不是“实现了子 agent”，而是把子 agent 的使用标准化： - 什么时候值得拆成子 agent。 - 怎样保证子任务边界清晰。 - 怎样避免主会话被中间日志和探索过程污染。 - 怎样给子 agent 足够上下文，但不继承整段会话噪音。 - 怎样做 spec compliance review 和 code quality review。 - 怎样处理 done、donewithconcerns、needscontext、blocked。 - 怎样避免多个子 agent 同时改同一批文件。 换句话说： 实践判断 适合用子 agent 的任务： - 多个独立问题可以并行探索。 - 多个测试失败属于不同模块。 - 需要一个 reviewer 从新上下文审查实现。 - 需要把 noisy 的日志分析、代码搜索、长文档总结移出主会话。 不适合用子 agent 的任务： - 根因高度相关，必须整体理解。 - 下一步马上依赖该结果，派发只会增加等待。 - 多个 agent 会写同一批文件。 - 任务边界不清，子 agent 只能猜。 关联 - ai"
   },
   {
     "id": "content/tech/architecture/index",
@@ -588,7 +657,8 @@ export const knowledgeModules: KnowledgeModule[] = [
         "id": "ai",
         "label": "AI",
         "docs": [
-          "content/tech/ai/index"
+          "content/tech/ai/index",
+          "content/tech/ai/superpowers-to-codex-subagent-workflow"
         ]
       },
       {
@@ -789,9 +859,72 @@ export const knowledgeChunks: KnowledgeChunk[] = [
   {
     "id": "content/tech/ai/index::2",
     "docId": "content/tech/ai/index",
-    "heading": "章节",
-    "text": "暂无。",
-    "searchText": "ai 章节 暂无。"
+    "heading": "笔记",
+    "text": "- Superpowers 到 Codex 的子 agent 编排链路",
+    "searchText": "ai 笔记 - superpowers 到 codex 的子 agent 编排链路"
+  },
+  {
+    "id": "content/tech/ai/superpowers-to-codex-subagent-workflow::1",
+    "docId": "content/tech/ai/superpowers-to-codex-subagent-workflow",
+    "heading": "核心结论",
+    "text": "Superpowers 不是子 agent runtime。它主要提供 workflow spec、prompt template 和跨平台工具映射；真正创建、并发执行、等待、继续和关闭子 agent 的能力来自 Codex runtime。 可以把职责分成三层：",
+    "searchText": "superpowers 到 codex 的子 agent 编排链路 核心结论 superpowers 不是子 agent runtime。它主要提供 workflow spec、prompt template 和跨平台工具映射；真正创建、并发执行、等待、继续和关闭子 agent 的能力来自 codex runtime。 可以把职责分成三层："
+  },
+  {
+    "id": "content/tech/ai/superpowers-to-codex-subagent-workflow::2",
+    "docId": "content/tech/ai/superpowers-to-codex-subagent-workflow",
+    "heading": "背景",
+    "text": "Superpowers 的 subagent 工作流常见于两类场景： - dispatching-parallel-agents：把多个独立问题拆给多个子 agent 并行探索或修复。 - subagent-driven-development：按计划逐个任务派发 implementer，再派 spec reviewer 和 code quality reviewer 做两阶段验收。 这些 skill 文件本身是 Markdown 说明和 prompt 模板，不是后台调度器。它们告诉主 agent 什么时候派发、怎样写子任务、怎样审查结果，以及什么时候继续或回退。",
+    "searchText": "superpowers 到 codex 的子 agent 编排链路 背景 superpowers 的 subagent 工作流常见于两类场景： - dispatching-parallel-agents：把多个独立问题拆给多个子 agent 并行探索或修复。 - subagent-driven-development：按计划逐个任务派发 implementer，再派 spec reviewer 和 code quality reviewer 做两阶段验收。 这些 skill 文件本身是 markdown 说明和 prompt 模板，不是后台调度器。它们告诉主 agent 什么时候派发、怎样写子任务、怎样审查结果，以及什么时候继续或回退。"
+  },
+  {
+    "id": "content/tech/ai/superpowers-to-codex-subagent-workflow::3",
+    "docId": "content/tech/ai/superpowers-to-codex-subagent-workflow",
+    "heading": "从 Superpowers 到 Codex 的映射",
+    "text": "Superpowers 原始说明常用 Claude Code 的 Task 表达“派发子 agent”。在 Codex 环境里，工具映射大致是： 因此，Superpowers 看到“dispatch subagent”时，在 Codex 中实际落到这些 runtime 工具： - spawnagent：创建一个独立 agent thread，返回 agent id。 - waitagent：等待一个或多个 agent 完成，并返回 final message/status。 - sendinput：给已有 agent 追加指令，或打断当前任务。 - closeagent：关闭已完成或不再需要的 agent thread，释放并发槽。",
+    "searchText": "superpowers 到 codex 的子 agent 编排链路 从 superpowers 到 codex 的映射 superpowers 原始说明常用 claude code 的 task 表达“派发子 agent”。在 codex 环境里，工具映射大致是： 因此，superpowers 看到“dispatch subagent”时，在 codex 中实际落到这些 runtime 工具： - spawnagent：创建一个独立 agent thread，返回 agent id。 - waitagent：等待一个或多个 agent 完成，并返回 final message/status。 - sendinput：给已有 agent 追加指令，或打断当前任务。 - closeagent：关闭已完成或不再需要的 agent thread，释放并发槽。"
+  },
+  {
+    "id": "content/tech/ai/superpowers-to-codex-subagent-workflow::4",
+    "docId": "content/tech/ai/superpowers-to-codex-subagent-workflow",
+    "heading": "执行链路",
+    "text": "一次典型链路是： 这里的“监听”不是 Superpowers 自己开线程监听。更准确地说，Codex runtime 维护 agent id 到状态和结果的映射；主 agent 需要结果时调用 waitagent，由 runtime 挂起等待或返回已完成结果。",
+    "searchText": "superpowers 到 codex 的子 agent 编排链路 执行链路 一次典型链路是： 这里的“监听”不是 superpowers 自己开线程监听。更准确地说，codex runtime 维护 agent id 到状态和结果的映射；主 agent 需要结果时调用 waitagent，由 runtime 挂起等待或返回已完成结果。"
+  },
+  {
+    "id": "content/tech/ai/superpowers-to-codex-subagent-workflow::5",
+    "docId": "content/tech/ai/superpowers-to-codex-subagent-workflow",
+    "heading": "子 agent 是什么",
+    "text": "Codex 文档使用的是 agent thread 这个产品抽象。它不是对操作系统 thread/process 的公开承诺。 可以确定的语义是： - 每个子 agent 有独立的 prompt / message history。 - 每个子 agent 有自己的模型调用循环和工具调用流。 - 子 agent 继承父会话的 sandbox 和 approval policy。 - CLI 中可以通过 /agent 查看或切换 active agent threads。 - 多个 agent 可以并行运行，但并行写同一批文件会带来冲突风险。 不能确定的是： - 一个子 agent 是否对应一个 OS process。 - 一个子 agent 是否对应一个 OS thread。 - CLI、App、Cloud、app-server 是否使用完全相同的底层实现。 稳定可依赖的抽象是 agent thread，不是进程或线程模型。",
+    "searchText": "superpowers 到 codex 的子 agent 编排链路 子 agent 是什么 codex 文档使用的是 agent thread 这个产品抽象。它不是对操作系统 thread/process 的公开承诺。 可以确定的语义是： - 每个子 agent 有独立的 prompt / message history。 - 每个子 agent 有自己的模型调用循环和工具调用流。 - 子 agent 继承父会话的 sandbox 和 approval policy。 - cli 中可以通过 /agent 查看或切换 active agent threads。 - 多个 agent 可以并行运行，但并行写同一批文件会带来冲突风险。 不能确定的是： - 一个子 agent 是否对应一个 os process。 - 一个子 agent 是否对应一个 os thread。 - cli、app、cloud、app-server 是否使用完全相同的底层实现。 稳定可依赖的抽象是 agent thread，不是进程或线程模型。"
+  },
+  {
+    "id": "content/tech/ai/superpowers-to-codex-subagent-workflow::6",
+    "docId": "content/tech/ai/superpowers-to-codex-subagent-workflow",
+    "heading": "回调模型",
+    "text": "Codex 的子 agent 结果回传更像异步任务状态机制，而不是传统代码里的 callback function： 伪代码可以理解为： scheduler.runInBackground 内部可能是 async task、worker thread、独立进程、远端 job 或混合实现。公开语义不要求用户知道这一层。",
+    "searchText": "superpowers 到 codex 的子 agent 编排链路 回调模型 codex 的子 agent 结果回传更像异步任务状态机制，而不是传统代码里的 callback function： 伪代码可以理解为： scheduler.runinbackground 内部可能是 async task、worker thread、独立进程、远端 job 或混合实现。公开语义不要求用户知道这一层。"
+  },
+  {
+    "id": "content/tech/ai/superpowers-to-codex-subagent-workflow::7",
+    "docId": "content/tech/ai/superpowers-to-codex-subagent-workflow",
+    "heading": "Superpowers 的价值",
+    "text": "Superpowers 的价值不是“实现了子 agent”，而是把子 agent 的使用标准化： - 什么时候值得拆成子 agent。 - 怎样保证子任务边界清晰。 - 怎样避免主会话被中间日志和探索过程污染。 - 怎样给子 agent 足够上下文，但不继承整段会话噪音。 - 怎样做 spec compliance review 和 code quality review。 - 怎样处理 DONE、DONEWITHCONCERNS、NEEDSCONTEXT、BLOCKED。 - 怎样避免多个子 agent 同时改同一批文件。 换句话说：",
+    "searchText": "superpowers 到 codex 的子 agent 编排链路 superpowers 的价值 superpowers 的价值不是“实现了子 agent”，而是把子 agent 的使用标准化： - 什么时候值得拆成子 agent。 - 怎样保证子任务边界清晰。 - 怎样避免主会话被中间日志和探索过程污染。 - 怎样给子 agent 足够上下文，但不继承整段会话噪音。 - 怎样做 spec compliance review 和 code quality review。 - 怎样处理 done、donewithconcerns、needscontext、blocked。 - 怎样避免多个子 agent 同时改同一批文件。 换句话说："
+  },
+  {
+    "id": "content/tech/ai/superpowers-to-codex-subagent-workflow::8",
+    "docId": "content/tech/ai/superpowers-to-codex-subagent-workflow",
+    "heading": "实践判断",
+    "text": "适合用子 agent 的任务： - 多个独立问题可以并行探索。 - 多个测试失败属于不同模块。 - 需要一个 reviewer 从新上下文审查实现。 - 需要把 noisy 的日志分析、代码搜索、长文档总结移出主会话。 不适合用子 agent 的任务： - 根因高度相关，必须整体理解。 - 下一步马上依赖该结果，派发只会增加等待。 - 多个 agent 会写同一批文件。 - 任务边界不清，子 agent 只能猜。",
+    "searchText": "superpowers 到 codex 的子 agent 编排链路 实践判断 适合用子 agent 的任务： - 多个独立问题可以并行探索。 - 多个测试失败属于不同模块。 - 需要一个 reviewer 从新上下文审查实现。 - 需要把 noisy 的日志分析、代码搜索、长文档总结移出主会话。 不适合用子 agent 的任务： - 根因高度相关，必须整体理解。 - 下一步马上依赖该结果，派发只会增加等待。 - 多个 agent 会写同一批文件。 - 任务边界不清，子 agent 只能猜。"
+  },
+  {
+    "id": "content/tech/ai/superpowers-to-codex-subagent-workflow::9",
+    "docId": "content/tech/ai/superpowers-to-codex-subagent-workflow",
+    "heading": "关联",
+    "text": "- AI",
+    "searchText": "superpowers 到 codex 的子 agent 编排链路 关联 - ai"
   },
   {
     "id": "content/tech/architecture/index::1",
