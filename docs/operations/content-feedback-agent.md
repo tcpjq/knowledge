@@ -37,6 +37,14 @@ EOF
 chmod 600 ~/.config/knowledge-agent/env
 ```
 
+Optional env:
+
+```bash
+BLOCKED_LABEL=content-feedback-blocked
+```
+
+Issues with `content-feedback-blocked` are skipped by the next scheduled scan. The runner adds this label when an issue cannot be safely handled without human clarification, or when the AI provider exits without a valid result file.
+
 Required tools:
 
 ```bash
@@ -83,12 +91,14 @@ Create `~/.config/systemd/user/knowledge-agent.timer`:
 
 ```ini
 [Unit]
-Description=Run knowledge content feedback agent every hour
+Description=Run knowledge content feedback agent every minute
 
 [Timer]
-OnBootSec=5min
-OnUnitActiveSec=1h
+OnActiveSec=1min
+OnUnitActiveSec=1min
+AccuracySec=10s
 Persistent=true
+Unit=knowledge-agent.service
 
 [Install]
 WantedBy=timers.target

@@ -12,6 +12,7 @@ REPO_FULL_NAME="${REPO_FULL_NAME:-tcpjq/knowledge}"
 AGENT_PROVIDER="${AGENT_PROVIDER:-codex}"
 WORKTREE_ROOT="${WORKTREE_ROOT:-/tmp/knowledge-content-feedback-agent}"
 BASE_BRANCH="${BASE_BRANCH:-main}"
+BLOCKED_LABEL="${BLOCKED_LABEL:-content-feedback-blocked}"
 
 require_command() {
   command -v "$1" >/dev/null 2>&1 || {
@@ -32,7 +33,14 @@ fi
 cd "$REPO_DIR"
 git fetch origin "$BASE_BRANCH"
 
-OPEN_FEEDBACK_COUNT="$(gh issue list --repo "$REPO_FULL_NAME" --label content-feedback --state open --limit 1 --json number --jq 'length')"
+gh label create "$BLOCKED_LABEL" \
+  --repo "$REPO_FULL_NAME" \
+  --color "BFD4F2" \
+  --description "Content feedback issue needs human clarification before AI processing" \
+  >/dev/null 2>&1 || true
+
+OPEN_FEEDBACK_QUERY="is:issue is:open label:content-feedback -label:$BLOCKED_LABEL"
+OPEN_FEEDBACK_COUNT="$(gh issue list --repo "$REPO_FULL_NAME" --search "$OPEN_FEEDBACK_QUERY" --limit 1 --json number --jq 'length')"
 if [[ "$OPEN_FEEDBACK_COUNT" == "0" ]]; then
   echo "No open content-feedback issue. Skipping Codex run."
   exit 0
@@ -58,11 +66,31 @@ cd "$WORKTREE_DIR"
 mkdir -p .agent
 node "$REPO_DIR/scripts/content-feedback-agent/build-prompt.mjs" .agent/content-feedback-prompt.md
 
+set +e
 "$REPO_DIR/scripts/content-feedback-agent/providers/$AGENT_PROVIDER.sh" .agent/content-feedback-prompt.md
+PROVIDER_STATUS=$?
+set -e
 
 if [[ ! -f .agent/content-feedback-result.json ]]; then
-  echo "Agent did not write .agent/content-feedback-result.json" >&2
-  exit 1
+  ISSUE_NUMBER="$(gh issue list --repo "$REPO_FULL_NAME" --search "$OPEN_FEEDBACK_QUERY" --limit 1 --json number --jq '.[0].number // empty')"
+  if [[ -n "$ISSUE_NUMBER" ]]; then
+    ISSUE_URL="https://github.com/$REPO_FULL_NAME/issues/$ISSUE_NUMBER"
+    cat > .agent/content-feedback-result.json <<JSON
+{
+  "status": "blocked",
+  "issueNumber": $ISSUE_NUMBER,
+  "issueUrl": "$ISSUE_URL",
+  "summary": "Agent provider exited with status $PROVIDER_STATUS and did not write .agent/content-feedback-result.json."
+}
+JSON
+  else
+    cat > .agent/content-feedback-result.json <<JSON
+{
+  "status": "no_issue",
+  "summary": "没有找到可处理的 content-feedback issue"
+}
+JSON
+  fi
 fi
 
 RESULT_JSON="$(cat .agent/content-feedback-result.json)"
@@ -77,6 +105,7 @@ if [[ "$STATUS" == "blocked" ]]; then
   ISSUE_NUMBER="$(node -e "const r=JSON.parse(process.argv[1]); console.log(r.issueNumber || '')" "$RESULT_JSON")"
   SUMMARY="$(node -e "const r=JSON.parse(process.argv[1]); console.log(r.summary || 'Blocked')" "$RESULT_JSON")"
   if [[ -n "$ISSUE_NUMBER" ]]; then
+    gh issue edit "$ISSUE_NUMBER" --repo "$REPO_FULL_NAME" --add-label "$BLOCKED_LABEL" >/dev/null 2>&1 || true
     gh issue comment "$ISSUE_NUMBER" --repo "$REPO_FULL_NAME" --body "AI content feedback agent is blocked: $SUMMARY"
   fi
   exit 0

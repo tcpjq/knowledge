@@ -5,7 +5,7 @@ const [, , outputPath = '.agent/content-feedback-prompt.md'] = process.argv;
 const prompt = `你是知识库内容反馈修复 agent。
 
 任务目标：
-1. 使用 GitHub CLI 检查仓库 tcpjq/knowledge 中 label=content-feedback 的 open issues。
+1. 使用 GitHub CLI 检查仓库 tcpjq/knowledge 中 label=content-feedback 且没有 label=content-feedback-blocked 的 open issues。
 2. 选择一个还没有被明显处理的 issue。
 3. 根据 issue 中的文档路径、原文、问题说明和期望修改，更新 Markdown 知识库。
 4. 必要时更新对应 index.md。
@@ -29,6 +29,7 @@ const prompt = `你是知识库内容反馈修复 agent。
 - 每次只处理一个 issue。
 - 如果没有可处理 issue，写入 status=no_issue。
 - 如果 issue 信息不足，写入 status=blocked，并在 summary 里说明原因。
+- 写结果文件时使用 shell 命令写入，例如 \`mkdir -p .agent && cat > .agent/content-feedback-result.json <<'JSON'\`，不要用 apply_patch 写 .agent 文件。
 - 保持文章风格简洁，不保存完整对话记录。
 - 每篇笔记只聚焦一个清晰知识单元。
 - 新增笔记时更新对应章节 index.md。
