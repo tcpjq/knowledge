@@ -440,7 +440,14 @@ export default function App() {
         Math.max(rect.left + window.scrollX, minLeft),
         Math.max(minLeft, maxLeft),
       );
-      const top = rect.bottom + window.scrollY + 10;
+      const popoverHeight = 360;
+      const belowTop = rect.bottom + window.scrollY + 10;
+      const aboveTop = rect.top + window.scrollY - popoverHeight - 10;
+      const viewportBottom = window.scrollY + window.innerHeight - 16;
+      const top =
+        belowTop + popoverHeight <= viewportBottom
+          ? belowTop
+          : Math.max(window.scrollY + 16, aboveTop);
       setSelectionPopover({ text: selectedText, top, left, results });
     };
 
