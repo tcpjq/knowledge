@@ -440,7 +440,7 @@ export default function App() {
         Math.max(rect.left + window.scrollX, minLeft),
         Math.max(minLeft, maxLeft),
       );
-      const popoverHeight = 360;
+      const popoverHeight = Math.min(420, window.innerHeight - 32);
       const belowTop = rect.bottom + window.scrollY + 10;
       const aboveTop = rect.top + window.scrollY - popoverHeight - 10;
       const viewportBottom = window.scrollY + window.innerHeight - 16;
