@@ -433,10 +433,12 @@ export default function App() {
       }
 
       const rect = range.getBoundingClientRect();
-      const width = 340;
+      const popoverWidth = Math.min(340, window.innerWidth - 32);
+      const minLeft = window.scrollX + 16;
+      const maxLeft = window.scrollX + window.innerWidth - popoverWidth - 16;
       const left = Math.min(
-        Math.max(16, rect.left + window.scrollX),
-        window.scrollX + window.innerWidth - width - 16,
+        Math.max(rect.left + window.scrollX, minLeft),
+        Math.max(minLeft, maxLeft),
       );
       const top = rect.bottom + window.scrollY + 10;
       setSelectionPopover({ text: selectedText, top, left, results });
