@@ -85,6 +85,13 @@ scripts/content-feedback-agent/run.sh
 
 The runner creates a temporary worktree under `WORKTREE_ROOT`, asks Codex to process one issue, verifies the result, and opens a PR when there are valid changes.
 
+Temporary worktrees do not contain ignored dependency directories. The runner reuses `web/node_modules` from `REPO_DIR` by symlinking it into each temporary worktree before verification. Install frontend dependencies in the main checkout first:
+
+```bash
+cd /home/ubuntu/agents/knowledge/web
+npm install
+```
+
 ## systemd User Timer
 
 Create `~/.config/systemd/user/knowledge-agent.service`:

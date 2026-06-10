@@ -111,6 +111,16 @@ trap cleanup EXIT
 git worktree add "$WORKTREE_DIR" -b "$TEMP_BRANCH" "origin/$BASE_BRANCH"
 cd "$WORKTREE_DIR"
 
+if [[ -d "$REPO_DIR/web/node_modules" && ! -e "$WORKTREE_DIR/web/node_modules" ]]; then
+  ln -s "$REPO_DIR/web/node_modules" "$WORKTREE_DIR/web/node_modules"
+fi
+
+if [[ ! -x "$WORKTREE_DIR/web/node_modules/.bin/tsc" ]]; then
+  echo "Missing web dependencies in temporary worktree." >&2
+  echo "Run npm install in $REPO_DIR/web, or provide $WORKTREE_DIR/web/node_modules before starting the agent." >&2
+  exit 1
+fi
+
 mkdir -p .agent
 node "$REPO_DIR/scripts/content-feedback-agent/build-prompt.mjs" .agent/content-feedback-prompt.md
 
