@@ -26,6 +26,7 @@ import {
   type HighlightPart,
   type SearchResult,
 } from './search';
+import { shouldScrollToSearchResults } from './search-view';
 
 const docById = new Map(knowledgeDocs.map((doc) => [doc.id, doc]));
 const giscusConfig: GiscusConfig = {
@@ -425,6 +426,8 @@ export default function App() {
   const [query, setQuery] = useState('');
   const articleRef = useRef<HTMLElement | null>(null);
   const popoverRef = useRef<HTMLDivElement | null>(null);
+  const previousQueryRef = useRef('');
+  const searchResultsRef = useRef<HTMLElement | null>(null);
   const [selectionPopover, setSelectionPopover] = useState<SelectionPopoverState | null>(null);
   const [searchModuleId, setSearchModuleId] = useState('all');
   const searchResults = useMemo(
@@ -529,6 +532,16 @@ export default function App() {
       quote: target.quote,
     });
   };
+
+  useEffect(() => {
+    const previousQuery = previousQueryRef.current;
+    previousQueryRef.current = query;
+    if (!shouldScrollToSearchResults(previousQuery, query)) return;
+
+    window.requestAnimationFrame(() => {
+      searchResultsRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    });
+  }, [query]);
 
   useEffect(() => {
     const closePopover = () => setSelectionPopover(null);
@@ -729,7 +742,7 @@ export default function App() {
         </header>
 
         {query.trim() ? (
-          <section className="search-results" aria-label="搜索结果">
+          <section className="search-results" ref={searchResultsRef} aria-label="搜索结果">
             <div className="section-heading">
               <div>
                 <h1>搜索结果</h1>
