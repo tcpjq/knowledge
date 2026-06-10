@@ -32,6 +32,12 @@ fi
 cd "$REPO_DIR"
 git fetch origin "$BASE_BRANCH"
 
+OPEN_FEEDBACK_COUNT="$(gh issue list --repo "$REPO_FULL_NAME" --label content-feedback --state open --limit 1 --json number --jq 'length')"
+if [[ "$OPEN_FEEDBACK_COUNT" == "0" ]]; then
+  echo "No open content-feedback issue. Skipping Codex run."
+  exit 0
+fi
+
 mkdir -p "$WORKTREE_ROOT"
 RUN_ID="$(date -u +%Y%m%d%H%M%S)"
 WORKTREE_DIR="$WORKTREE_ROOT/run-$RUN_ID"
