@@ -6,6 +6,7 @@ import {
   type Heading,
   type KnowledgeDoc,
 } from './generated/knowledge-data';
+import { buildContentFeedbackIssueUrl, type ContentFeedbackTarget } from './feedback';
 import {
   baseGiscusConfig,
   buildGiscusAttributes,
@@ -60,11 +61,30 @@ function inlineMarkdown(value: string) {
   return html;
 }
 
-function renderMarkdown(markdown: string) {
+function plainMarkdown(value: string) {
+  return value
+    .replace(/```[\s\S]*?```/g, ' ')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/!\[[^\]]*]\([^)]*\)/g, ' ')
+    .replace(/\[([^\]]+)]\([^)]*\)/g, '$1')
+    .replace(/^#{1,6}\s+/gm, '')
+    .replace(/^>\s?/gm, '')
+    .replace(/[*_~]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function renderMarkdown(
+  markdown: string,
+  options?: {
+    onFeedback?: (target: Pick<ContentFeedbackTarget, 'sectionTitle' | 'quote'>) => void;
+  },
+) {
   const lines = markdown.split('\n');
   const nodes: ReactNode[] = [];
   const usedSlugs = new Map<string, number>();
   let index = 0;
+  let currentSectionTitle = '';
 
   const nextSlug = (text: string) => {
     const base = slugify(text) || `heading-${nodes.length + 1}`;
@@ -104,6 +124,9 @@ function renderMarkdown(markdown: string) {
       const level = heading[1].length;
       const text = heading[2].trim().replace(/\s+#$/, '');
       const slug = nextSlug(text);
+      if (level <= 3) {
+        currentSectionTitle = text;
+      }
       nodes.push(createElement(`h${Math.min(level, 4)}`, { id: slug, key: `heading-${index}` }, text));
       index += 1;
       continue;
@@ -176,10 +199,23 @@ function renderMarkdown(markdown: string) {
       index += 1;
     }
     nodes.push(
-      <p
-        dangerouslySetInnerHTML={{ __html: inlineMarkdown(paragraph.join(' ')) }}
-        key={`p-${index}`}
-      />,
+      <div className="feedback-target" key={`p-${index}`}>
+        <p dangerouslySetInnerHTML={{ __html: inlineMarkdown(paragraph.join(' ')) }} />
+        {options?.onFeedback ? (
+          <button
+            className="inline-feedback-button"
+            onClick={() =>
+              options.onFeedback?.({
+                sectionTitle: currentSectionTitle || undefined,
+                quote: plainMarkdown(paragraph.join(' ')),
+              })
+            }
+            type="button"
+          >
+            反馈此段
+          </button>
+        ) : null}
+      </div>,
     );
   }
 
@@ -220,6 +256,10 @@ function Metadata({ doc }: { doc: KnowledgeDoc }) {
       ))}
     </div>
   );
+}
+
+function openContentFeedback(target: ContentFeedbackTarget) {
+  window.open(buildContentFeedbackIssueUrl(target), '_blank', 'noopener,noreferrer');
 }
 
 function Toc({ headings }: { headings: Heading[] }) {
@@ -447,6 +487,24 @@ export default function App() {
     setSelectionPopover(null);
     window.getSelection()?.removeAllRanges();
     selectDoc(doc);
+  };
+
+  const openDocFeedback = () => {
+    openContentFeedback({
+      docId: selectedDoc.id,
+      docTitle: selectedDoc.title,
+      docPath: selectedDoc.path,
+    });
+  };
+
+  const openInlineFeedback = (target: Pick<ContentFeedbackTarget, 'sectionTitle' | 'quote'>) => {
+    openContentFeedback({
+      docId: selectedDoc.id,
+      docTitle: selectedDoc.title,
+      docPath: selectedDoc.path,
+      sectionTitle: target.sectionTitle,
+      quote: target.quote,
+    });
   };
 
   useEffect(() => {
@@ -718,14 +776,21 @@ export default function App() {
 
         <article className="article" ref={articleRef}>
           <div className="article-header">
-            <h1>{selectedDoc.title}</h1>
+            <div className="article-title-row">
+              <h1>{selectedDoc.title}</h1>
+              <button className="doc-feedback-button" onClick={openDocFeedback} type="button">
+                反馈本文问题
+              </button>
+            </div>
             <Metadata doc={selectedDoc} />
             <div className="toc-inline">
               <h2>本文目录</h2>
               <Toc headings={selectedDoc.headings} />
             </div>
           </div>
-          <div className="markdown-body">{renderMarkdown(selectedDoc.body)}</div>
+          <div className="markdown-body">
+            {renderMarkdown(selectedDoc.body, { onFeedback: openInlineFeedback })}
+          </div>
           <RelatedKnowledge docs={relatedDocs} onSelect={selectDoc} />
           <GiscusComments doc={selectedDoc} />
           {(previousDoc || nextDoc) ? (

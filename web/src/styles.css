@@ -350,11 +350,40 @@ mark {
   padding-bottom: 20px;
 }
 
-.article-header > h1 {
+.article-title-row {
+  align-items: flex-start;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.article-title-row > h1 {
   color: #101820;
   font-size: 36px;
   line-height: 1.2;
   margin: 0 0 12px;
+}
+
+.doc-feedback-button,
+.inline-feedback-button {
+  background: #ffffff;
+  border: 1px solid #cfd6df;
+  border-radius: 8px;
+  color: #3f4b59;
+  flex: 0 0 auto;
+  font-size: 13px;
+  padding: 7px 10px;
+}
+
+.doc-feedback-button:hover,
+.inline-feedback-button:hover {
+  background: #eef3f1;
+  border-color: #b9d2c8;
+  color: #1b4d3e;
+}
+
+.doc-feedback-button {
+  margin-top: 5px;
 }
 
 .doc-meta {
@@ -411,6 +440,29 @@ mark {
 .markdown-body p,
 .markdown-body li {
   overflow-wrap: anywhere;
+}
+
+.feedback-target {
+  align-items: flex-start;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.feedback-target > p {
+  margin-top: 1em;
+}
+
+.inline-feedback-button {
+  opacity: 0;
+  position: sticky;
+  top: 84px;
+  transition: opacity 120ms ease;
+}
+
+.feedback-target:focus-within .inline-feedback-button,
+.feedback-target:hover .inline-feedback-button {
+  opacity: 1;
 }
 
 .markdown-body a {
@@ -784,8 +836,27 @@ mark {
     padding-right: 18px;
   }
 
-  .article-header > h1 {
+  .article-title-row {
+    display: grid;
+  }
+
+  .article-title-row > h1 {
     font-size: 28px;
+  }
+
+  .doc-feedback-button {
+    justify-self: start;
+    margin-top: 0;
+  }
+
+  .feedback-target {
+    grid-template-columns: 1fr;
+  }
+
+  .inline-feedback-button {
+    opacity: 1;
+    position: static;
+    width: max-content;
   }
 
   .article-nav {
