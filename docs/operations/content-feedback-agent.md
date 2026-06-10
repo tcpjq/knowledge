@@ -32,6 +32,7 @@ REPO_FULL_NAME=tcpjq/knowledge
 AGENT_PROVIDER=codex
 WORKTREE_ROOT=/tmp/knowledge-content-feedback-agent
 BASE_BRANCH=main
+CODEX_BYPASS_SANDBOX=1
 FEISHU_WEBHOOK=
 EOF
 chmod 600 ~/.config/knowledge-agent/env
@@ -44,6 +45,8 @@ BLOCKED_LABEL=content-feedback-blocked
 ```
 
 Issues with `content-feedback-blocked` are skipped by the next scheduled scan. The runner adds this label when an issue cannot be safely handled without human clarification, or when the AI provider exits without a valid result file.
+
+`CODEX_BYPASS_SANDBOX=1` is recommended for a personal server when Codex runs inside a systemd service and the host does not allow the nested bubblewrap sandbox to create writable user namespaces. The outer runner still isolates work in a temporary git worktree, validates allowed changed paths, runs verification, and opens a PR instead of merging directly.
 
 Required tools:
 
@@ -85,6 +88,7 @@ Type=oneshot
 EnvironmentFile=%h/.config/knowledge-agent/env
 WorkingDirectory=%h/agents/knowledge
 ExecStart=%h/agents/knowledge/scripts/content-feedback-agent/run.sh
+TimeoutStartSec=20min
 ```
 
 Create `~/.config/systemd/user/knowledge-agent.timer`:
