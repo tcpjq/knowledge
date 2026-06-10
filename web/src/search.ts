@@ -108,6 +108,10 @@ function makeSnippet(text: string, keywords: string[], maxLength = 110) {
   return `${prefix}${normalizedText.slice(start, end)}${suffix}`;
 }
 
+function normalizeSelectionText(value: string) {
+  return value.replace(/\s+/g, ' ').trim();
+}
+
 export function searchKnowledge<TDoc extends SearchDoc>({
   query,
   docs,
@@ -170,4 +174,30 @@ export function searchKnowledge<TDoc extends SearchDoc>({
     if (b.score !== a.score) return b.score - a.score;
     return a.doc.title.localeCompare(b.doc.title, 'zh-CN');
   });
+}
+
+export function searchSelectionKnowledge<TDoc extends SearchDoc>({
+  selectedText,
+  currentDocId,
+  docs,
+  chunks,
+  modules,
+  limit = 5,
+}: {
+  selectedText: string;
+  currentDocId: string;
+  docs: TDoc[];
+  chunks: SearchChunk[];
+  modules: SearchModule[];
+  limit?: number;
+}) {
+  const normalized = normalizeSelectionText(selectedText);
+  if (normalized.length < 4 || normalized.length > 120) return [];
+
+  return searchKnowledge({
+    query: normalized,
+    docs: docs.filter((doc) => doc.id !== currentDocId),
+    chunks: chunks.filter((chunk) => chunk.docId !== currentDocId),
+    modules,
+  }).slice(0, limit);
 }

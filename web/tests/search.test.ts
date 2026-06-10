@@ -1,6 +1,7 @@
 import {
   highlightText,
   searchKnowledge,
+  searchSelectionKnowledge,
   type SearchChunk,
   type SearchDoc,
   type SearchModule,
@@ -130,4 +131,44 @@ assertEqual(
     { text: '架构', match: true },
   ],
   'highlights multiple keywords',
+);
+
+const selectionResults = searchSelectionKnowledge({
+  selectedText: '系统分成哪些模块',
+  currentDocId: 'content/tech/architecture/what-is-architecture',
+  docs,
+  chunks,
+  modules,
+});
+
+assertEqual(
+  selectionResults.map((result) => result.doc.id),
+  [],
+  'selection search excludes the current document',
+);
+
+const crossDocSelectionResults = searchSelectionKnowledge({
+  selectedText: '沟通模块用于沉淀表达',
+  currentDocId: 'content/tech/architecture/what-is-architecture',
+  docs,
+  chunks,
+  modules,
+});
+
+assertEqual(
+  crossDocSelectionResults[0].chunk?.id,
+  'content/communication/index::1',
+  'selection search returns chunk-level matches when available',
+);
+
+assertEqual(
+  searchSelectionKnowledge({
+    selectedText: '架',
+    currentDocId: 'content/tech/architecture/what-is-architecture',
+    docs,
+    chunks,
+    modules,
+  }),
+  [],
+  'selection search ignores very short selections',
 );
