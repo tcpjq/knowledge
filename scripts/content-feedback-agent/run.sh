@@ -94,6 +94,12 @@ if [[ -z "$NEXT_FEEDBACK_ISSUE_NUMBER" ]]; then
   exit 0
 fi
 
+NEXT_FEEDBACK_BRANCH="$(node -e "import('./scripts/content-feedback-agent/lib.mjs').then(({buildBranchName}) => console.log(buildBranchName(Number(process.argv[1]))))" "$NEXT_FEEDBACK_ISSUE_NUMBER")"
+if [[ "$(open_pr_count_for_branch "$NEXT_FEEDBACK_BRANCH")" != "0" ]]; then
+  echo "Open PR already exists for $NEXT_FEEDBACK_BRANCH. Skipping Codex run."
+  exit 0
+fi
+
 mkdir -p "$WORKTREE_ROOT"
 RUN_ID="$(date -u +%Y%m%d%H%M%S)"
 WORKTREE_DIR="$WORKTREE_ROOT/run-$RUN_ID"
