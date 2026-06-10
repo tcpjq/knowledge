@@ -1,6 +1,7 @@
 import { mkdir, readdir, readFile, stat, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { computeRelatedDocIds } from './knowledge-relations.mjs';
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url));
 const webRoot = path.resolve(scriptDir, '..');
@@ -370,6 +371,10 @@ async function main() {
     chunks.push(...extractChunks(body, doc));
   }
 
+  for (const doc of docs) {
+    doc.relatedDocIds = computeRelatedDocIds(doc, docs);
+  }
+
   const modules = buildModules(docs);
   const output = `export type Heading = {
   level: number;
@@ -389,6 +394,7 @@ export type KnowledgeDoc = {
   headings: Heading[];
   body: string;
   searchText: string;
+  relatedDocIds: string[];
 };
 
 export type KnowledgeSection = {
