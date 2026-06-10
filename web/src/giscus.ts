@@ -13,11 +13,13 @@ export type GiscusConfig = {
   loading: 'lazy' | 'eager';
 };
 
-export const baseGiscusConfig: Omit<GiscusConfig, 'category' | 'categoryId'> = {
+export const baseGiscusConfig: GiscusConfig = {
   repo: 'tcpjq/knowledge',
   repoId: 'R_kgDOS1ZCvQ',
+  category: 'General',
+  categoryId: 'DIC_kwDOS1ZCvc4C-5Bs',
   mapping: 'specific',
-  strict: '1',
+  strict: '0',
   reactionsEnabled: '1',
   emitMetadata: '0',
   inputPosition: 'bottom',

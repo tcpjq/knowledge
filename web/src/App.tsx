@@ -25,8 +25,8 @@ import {
 const docById = new Map(knowledgeDocs.map((doc) => [doc.id, doc]));
 const giscusConfig: GiscusConfig = {
   ...baseGiscusConfig,
-  category: import.meta.env.VITE_GISCUS_CATEGORY || 'General',
-  categoryId: import.meta.env.VITE_GISCUS_CATEGORY_ID || '',
+  category: import.meta.env.VITE_GISCUS_CATEGORY || baseGiscusConfig.category,
+  categoryId: import.meta.env.VITE_GISCUS_CATEGORY_ID || baseGiscusConfig.categoryId,
 };
 
 function escapeHtml(value: string) {

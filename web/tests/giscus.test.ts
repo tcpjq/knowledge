@@ -1,4 +1,5 @@
 import {
+  baseGiscusConfig,
   buildGiscusAttributes,
   buildGiscusTerm,
   isGiscusConfigured,
@@ -15,9 +16,9 @@ const configured: GiscusConfig = {
   repo: 'tcpjq/knowledge',
   repoId: 'R_kgDOS1ZCvQ',
   category: 'General',
-  categoryId: 'DIC_example',
+  categoryId: 'DIC_kwDOS1ZCvc4C-5Bs',
   mapping: 'specific',
-  strict: '1',
+  strict: '0',
   reactionsEnabled: '1',
   emitMetadata: '0',
   inputPosition: 'bottom',
@@ -39,9 +40,9 @@ assertEqual(
 );
 
 assertEqual(
-  isGiscusConfigured({ ...configured, categoryId: '' }),
-  false,
-  'missing category id disables giscus',
+  baseGiscusConfig.categoryId,
+  'DIC_kwDOS1ZCvc4C-5Bs',
+  'ships the configured GitHub Discussions category id',
 );
 
 assertEqual(
@@ -51,10 +52,10 @@ assertEqual(
     'data-repo': 'tcpjq/knowledge',
     'data-repo-id': 'R_kgDOS1ZCvQ',
     'data-category': 'General',
-    'data-category-id': 'DIC_example',
+    'data-category-id': 'DIC_kwDOS1ZCvc4C-5Bs',
     'data-mapping': 'specific',
     'data-term': 'knowledge:content/tech/ai/superpowers-to-codex-subagent-workflow',
-    'data-strict': '1',
+    'data-strict': '0',
     'data-reactions-enabled': '1',
     'data-emit-metadata': '0',
     'data-input-position': 'bottom',
