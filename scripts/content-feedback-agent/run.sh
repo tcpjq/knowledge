@@ -197,7 +197,7 @@ mapfile -t CHANGED_FILES < <(
   {
     git diff --name-only --diff-filter=ACMR
     git ls-files --others --exclude-standard
-  } | sort -u
+  } | sort -u | grep -vx 'web/node_modules' || true
 )
 
 if [[ "${#CHANGED_FILES[@]}" -eq 0 ]]; then
@@ -213,7 +213,7 @@ mapfile -t FINAL_CHANGED_FILES < <(
   {
     git diff --name-only --diff-filter=ACMR
     git ls-files --others --exclude-standard
-  } | sort -u
+  } | sort -u | grep -vx 'web/node_modules' || true
 )
 
 printf '%s\n' "${FINAL_CHANGED_FILES[@]}" | node -e "import('./scripts/content-feedback-agent/lib.mjs').then(({assertAllowedChangedFiles}) => { const fs = require('node:fs'); assertAllowedChangedFiles(fs.readFileSync(0, 'utf8').trim().split('\\n').filter(Boolean)); })"
