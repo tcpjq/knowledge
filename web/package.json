@@ -8,8 +8,7 @@
     "generate": "node scripts/generate-knowledge-data.mjs",
     "test:navigation": "tsc --module NodeNext --moduleResolution NodeNext --target ES2022 --strict --esModuleInterop --skipLibCheck --outDir /tmp/knowledge-web-tests src/navigation.ts tests/navigation.test.ts && node /tmp/knowledge-web-tests/tests/navigation.test.js",
     "test:search": "tsc --module NodeNext --moduleResolution NodeNext --target ES2022 --strict --esModuleInterop --skipLibCheck --outDir /tmp/knowledge-web-search-tests src/search.ts tests/search.test.ts && node /tmp/knowledge-web-search-tests/tests/search.test.js",
-    "test:relations": "node tests/relations.test.mjs",
-    "test": "npm run test:relations && npm run test:search && npm run test:navigation",
+    "test": "npm run test:search && npm run test:navigation",
     "build": "npm run generate && tsc --noEmit && vite build",
     "preview": "vite preview --host 0.0.0.0"
   },

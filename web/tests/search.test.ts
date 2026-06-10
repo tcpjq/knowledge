@@ -1,4 +1,5 @@
 import {
+  findRuntimeRelatedKnowledge,
   highlightText,
   searchKnowledge,
   searchSelectionKnowledge,
@@ -6,6 +7,11 @@ import {
   type SearchDoc,
   type SearchModule,
 } from '../src/search.js';
+
+type RelatedSearchDoc = SearchDoc & {
+  body: string;
+  headings: { level: number; text: string; slug: string }[];
+};
 
 function assertEqual<T>(actual: T, expected: T, message: string) {
   if (JSON.stringify(actual) !== JSON.stringify(expected)) {
@@ -69,6 +75,88 @@ const chunks: SearchChunk[] = [
 const modules: SearchModule[] = [
   { id: 'tech', label: '技术' },
   { id: 'communication', label: '沟通' },
+];
+
+const relatedDocs: RelatedSearchDoc[] = [
+  {
+    id: 'content/communication/review',
+    title: '方案评审',
+    path: 'content/communication/review.md',
+    module: 'communication',
+    moduleLabel: '沟通',
+    section: 'meetings',
+    sectionLabel: '会议',
+    tags: ['会议', '方案评审'],
+    headings: [
+      { level: 1, text: '方案评审', slug: '方案评审' },
+      { level: 2, text: '如何表达风险', slug: '如何表达风险' },
+    ],
+    body: '# 方案评审\n\n如何表达风险？\n\n## 关联\n\n- [什么是架构](../tech/architecture/what-is-architecture.md)\n',
+    searchText: '方案评审 会议 如何表达风险 取舍 建议',
+  },
+  {
+    id: 'content/tech/architecture/what-is-architecture',
+    title: '什么是架构',
+    path: 'content/tech/architecture/what-is-architecture.md',
+    module: 'tech',
+    moduleLabel: '技术',
+    section: 'architecture',
+    sectionLabel: '架构与系统设计',
+    tags: ['architecture'],
+    headings: [{ level: 1, text: '什么是架构', slug: '什么是架构' }],
+    body: '# 什么是架构\n\n架构关注系统取舍和风险。\n',
+    searchText: '什么是架构 技术 architecture 系统取舍 风险',
+  },
+  {
+    id: 'content/communication/risk-expression',
+    title: '风险表达',
+    path: 'content/communication/risk-expression.md',
+    module: 'communication',
+    moduleLabel: '沟通',
+    section: 'meetings',
+    sectionLabel: '会议',
+    tags: ['会议'],
+    headings: [{ level: 1, text: '风险表达', slug: '风险表达' }],
+    body: '# 风险表达\n\n表达风险时要给出建议。\n',
+    searchText: '风险表达 沟通 会议 表达风险 建议',
+  },
+  {
+    id: 'content/communication/index',
+    title: '沟通',
+    path: 'content/communication/index.md',
+    module: 'communication',
+    moduleLabel: '沟通',
+    section: 'root',
+    sectionLabel: '概览',
+    tags: [],
+    headings: [{ level: 1, text: '沟通', slug: '沟通' }],
+    body: '# 沟通\n',
+    searchText: '沟通 会议 方案评审 表达风险',
+  },
+];
+
+const relatedChunks: SearchChunk[] = [
+  {
+    id: 'content/tech/architecture/what-is-architecture::1',
+    docId: 'content/tech/architecture/what-is-architecture',
+    heading: '什么是架构',
+    text: '架构关注系统取舍和风险。',
+    searchText: '什么是架构 架构关注系统取舍和风险。',
+  },
+  {
+    id: 'content/communication/risk-expression::1',
+    docId: 'content/communication/risk-expression',
+    heading: '风险表达',
+    text: '表达风险时要给出建议。',
+    searchText: '风险表达 表达风险时要给出建议。',
+  },
+  {
+    id: 'content/communication/index::1',
+    docId: 'content/communication/index',
+    heading: '沟通',
+    text: '沟通模块索引。',
+    searchText: '沟通 会议 方案评审 表达风险',
+  },
 ];
 
 const architectureResults = searchKnowledge({
@@ -206,4 +294,20 @@ assertEqual(
   }).map((result) => result.doc.id),
   ['content/tech/api/index'],
   'selection search allows three-character ASCII acronyms',
+);
+
+const runtimeRelated = findRuntimeRelatedKnowledge({
+  doc: relatedDocs[0],
+  docs: relatedDocs,
+  chunks: relatedChunks,
+  modules,
+});
+
+assertEqual(
+  runtimeRelated.map((result) => result.doc.id),
+  [
+    'content/tech/architecture/what-is-architecture',
+    'content/communication/risk-expression',
+  ],
+  'runtime related knowledge keeps manual links first and supplements with local search while excluding current and index docs',
 );

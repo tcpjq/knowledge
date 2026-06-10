@@ -15,9 +15,9 @@ The first version should improve reading and discovery while keeping the system 
 
 In scope:
 
-- Generate related note ids during `web/scripts/generate-knowledge-data.mjs`.
+- Generate only base document and chunk data during `web/scripts/generate-knowledge-data.mjs`.
 - Prefer manually authored links in a document's `## 关联` section.
-- Add automatic related-note scoring from static metadata and text.
+- Add runtime related-note scoring from static metadata and text in the frontend.
 - Render a related-notes section at the bottom of articles.
 - Detect selected article text and show a small related-results popover.
 - Reuse the existing local search and chunk data.
@@ -44,33 +44,24 @@ This makes a static related-knowledge feature feasible without changing storage 
 
 ## Data Model
 
-Extend `KnowledgeDoc` with:
+`KnowledgeDoc` keeps only base document data: title, path, module, section, tags, headings, body, and search text. Related notes are not stored in generated data. The frontend computes them when rendering the selected article.
 
-```ts
-relatedDocIds: string[];
-```
-
-`relatedDocIds` contains up to 5 document ids. It excludes:
-
-- The current document.
-- Module and section index pages such as `content/communication/index.md`.
-- Documents that cannot be resolved from links.
-
-Manual links from `## 关联` are preserved first. Automatic matches fill remaining slots.
+Runtime related results contain up to 5 documents. They exclude the current document, module and section index pages such as `content/communication/index.md`, and unresolved manual links.
 
 ## Related-Note Scoring
 
-The generator computes related documents in this order:
+The frontend computes related documents when an article is rendered:
 
 1. Parse the current document's `## 关联` section and resolve local Markdown links.
-2. Score remaining candidates using static signals:
-   - Shared tags: high weight.
-   - Title keyword overlap: high weight.
-   - Same section: medium weight.
-   - Same module: low weight.
-   - Body/chunk keyword overlap: low-to-medium weight.
-3. Sort by score, then title using `zh-CN` locale.
-4. Keep the first 5 ids after manual links.
+2. Extract runtime search queries from the current document:
+   - Tags.
+   - Title.
+   - H2/H3 headings.
+   - Question-like sentences containing terms such as `如何`, `为什么`, `是否`, `怎么`, or `什么`.
+3. Run local search for those queries.
+4. Aggregate candidate scores, excluding current and index docs.
+5. Sort by score, then title using `zh-CN` locale.
+6. Keep the first 5 results after manual links.
 
 Manual links should outrank automatic results even if their text score is lower, because they represent intentional author judgment.
 
@@ -123,11 +114,10 @@ Mobile text selection support is best-effort in this version.
 Recommended implementation boundaries:
 
 - `web/scripts/generate-knowledge-data.mjs`
-  - Extract manual relation links.
-  - Compute related ids.
-  - Emit the updated type and data.
+  - Emit base document and chunk data only.
 
 - `web/src/search.ts`
+  - Compute runtime related notes.
   - Reuse or add a helper for selection queries.
   - Keep ranking deterministic and local.
 
@@ -141,19 +131,19 @@ Recommended implementation boundaries:
 
 ## Error Handling
 
-- Broken manual links are ignored during generation.
+- Broken manual links are ignored during runtime related search.
 - Empty or low-quality selection text does not show a popover.
 - If selection search returns no results, show a small empty state or close the popover. Prefer closing for the first version to avoid visual noise.
-- If no related docs are generated, omit the article footer section.
+- If no related docs are found, omit the article footer section.
 
 ## Testing
 
 Add focused coverage for:
 
 - Manual `## 关联` links are included first.
-- Current document is excluded from generated related ids.
-- Index pages are excluded from generated related ids.
-- Automatic related ids are deterministic.
+- Current document is excluded from runtime related results.
+- Index pages are excluded from runtime related results.
+- Runtime automatic related results are deterministic.
 - Selection query excludes the current document and returns chunk-level matches when available.
 
 Existing navigation and search tests should continue to pass.

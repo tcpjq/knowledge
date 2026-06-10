@@ -8,6 +8,7 @@ import {
 } from './generated/knowledge-data';
 import { flattenDocIds, getAdjacentDocIds, getDefaultExpandedSections } from './navigation';
 import {
+  findRuntimeRelatedKnowledge,
   highlightText,
   searchKnowledge,
   searchSelectionKnowledge,
@@ -337,11 +338,18 @@ export default function App() {
     : { previousId: undefined, nextId: undefined };
   const previousDoc = adjacentDocIds.previousId ? docById.get(adjacentDocIds.previousId) : undefined;
   const nextDoc = adjacentDocIds.nextId ? docById.get(adjacentDocIds.nextId) : undefined;
-  const relatedDocs = selectedDoc
-    ? selectedDoc.relatedDocIds
-        .map((docId) => docById.get(docId))
-        .filter((doc): doc is KnowledgeDoc => Boolean(doc))
-    : [];
+  const relatedDocs = useMemo(
+    () =>
+      selectedDoc
+        ? findRuntimeRelatedKnowledge({
+            doc: selectedDoc,
+            docs: knowledgeDocs,
+            chunks: knowledgeChunks,
+            modules: knowledgeModules,
+          }).map((result) => result.doc)
+        : [],
+    [selectedDoc],
+  );
 
   const selectModule = (moduleId: string) => {
     const nextModule = knowledgeModules.find((module) => module.id === moduleId);
