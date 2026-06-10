@@ -10,6 +10,8 @@ The first version uses a hybrid model:
 systemd timer
   -> scripts/content-feedback-agent/run.sh
   -> temporary git worktree
+  -> codex exec -C <temporary worktree>
+  -> Codex reads .agents/skills/content-feedback-agent/SKILL.md
   -> Codex scans content-feedback issues and edits files
   -> shell runner validates changed paths
   -> npm run generate / test / build
@@ -17,7 +19,15 @@ systemd timer
   -> optional Feishu notification
 ```
 
-Codex decides which issue is actionable and edits the knowledge content. The shell runner keeps control of Git operations, PR creation, validation, and notifications.
+Codex decides which issue is actionable and edits the knowledge content by following the repository skill. The shell runner keeps control of Git operations, PR creation, validation, labels, and notifications.
+
+The canonical skill is:
+
+```text
+.agents/skills/content-feedback-agent/SKILL.md
+```
+
+The legacy `skills/content-feedback-agent/SKILL.md` path only points to the canonical file. Keep the executable workflow rules in `.agents/skills/...` so Codex CLI, Codex app, and other agent tools can discover the same workflow from the repository.
 
 ## Server Environment
 

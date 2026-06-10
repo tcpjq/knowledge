@@ -13,6 +13,7 @@ AGENT_PROVIDER="${AGENT_PROVIDER:-codex}"
 WORKTREE_ROOT="${WORKTREE_ROOT:-/tmp/knowledge-content-feedback-agent}"
 BASE_BRANCH="${BASE_BRANCH:-main}"
 BLOCKED_LABEL="${BLOCKED_LABEL:-content-feedback-blocked}"
+REPO_OWNER="${REPO_FULL_NAME%%/*}"
 
 require_command() {
   command -v "$1" >/dev/null 2>&1 || {
@@ -36,6 +37,46 @@ next_feedback_issue_number() {
     -f labels=content-feedback \
     -f per_page=20 \
     --jq "map(select(([.labels[].name] | index(\"$BLOCKED_LABEL\")) | not)) | .[0].number // empty"
+}
+
+add_issue_label() {
+  local issue_number="${1:?issue number required}"
+  local label="${2:?label required}"
+
+  gh api -X POST "repos/$REPO_FULL_NAME/issues/$issue_number/labels" \
+    -f "labels[]=$label" \
+    >/dev/null
+}
+
+add_issue_comment() {
+  local issue_number="${1:?issue number required}"
+  local body="${2:?comment body required}"
+
+  gh api -X POST "repos/$REPO_FULL_NAME/issues/$issue_number/comments" \
+    -f "body=$body" \
+    >/dev/null
+}
+
+open_pr_count_for_branch() {
+  local branch="${1:?branch required}"
+
+  gh api -X GET "repos/$REPO_FULL_NAME/pulls" \
+    -f state=open \
+    -f "head=$REPO_OWNER:$branch" \
+    --jq 'length'
+}
+
+create_pull_request() {
+  local branch="${1:?branch required}"
+  local title="${2:?title required}"
+  local body="${3:?body required}"
+
+  gh api -X POST "repos/$REPO_FULL_NAME/pulls" \
+    -f base="$BASE_BRANCH" \
+    -f head="$branch" \
+    -f title="$title" \
+    -f body="$body" \
+    --jq '.html_url'
 }
 
 cd "$REPO_DIR"
@@ -112,8 +153,8 @@ if [[ "$STATUS" == "blocked" ]]; then
   ISSUE_NUMBER="$(node -e "const r=JSON.parse(process.argv[1]); console.log(r.issueNumber || '')" "$RESULT_JSON")"
   SUMMARY="$(node -e "const r=JSON.parse(process.argv[1]); console.log(r.summary || 'Blocked')" "$RESULT_JSON")"
   if [[ -n "$ISSUE_NUMBER" ]]; then
-    gh issue edit "$ISSUE_NUMBER" --repo "$REPO_FULL_NAME" --add-label "$BLOCKED_LABEL" >/dev/null 2>&1 || true
-    gh issue comment "$ISSUE_NUMBER" --repo "$REPO_FULL_NAME" --body "AI content feedback agent is blocked: $SUMMARY"
+    add_issue_label "$ISSUE_NUMBER" "$BLOCKED_LABEL" || true
+    add_issue_comment "$ISSUE_NUMBER" "AI content feedback agent is blocked: $SUMMARY"
   fi
   exit 0
 fi
@@ -122,7 +163,7 @@ ISSUE_NUMBER="$(node -e "import('./scripts/content-feedback-agent/lib.mjs').then
 SUMMARY="$(node -e "import('./scripts/content-feedback-agent/lib.mjs').then(({parseAgentResult}) => console.log(parseAgentResult(process.argv[1]).summary))" "$RESULT_JSON")"
 FINAL_BRANCH="$(node -e "import('./scripts/content-feedback-agent/lib.mjs').then(({buildBranchName}) => console.log(buildBranchName(Number(process.argv[1]))))" "$ISSUE_NUMBER")"
 
-OPEN_PR_COUNT="$(gh pr list --repo "$REPO_FULL_NAME" --head "$FINAL_BRANCH" --state open --json number --jq 'length')"
+OPEN_PR_COUNT="$(open_pr_count_for_branch "$FINAL_BRANCH")"
 if [[ "$OPEN_PR_COUNT" != "0" ]]; then
   echo "Open PR already exists for $FINAL_BRANCH"
   exit 0
@@ -138,7 +179,7 @@ mapfile -t CHANGED_FILES < <(
 )
 
 if [[ "${#CHANGED_FILES[@]}" -eq 0 ]]; then
-  gh issue comment "$ISSUE_NUMBER" --repo "$REPO_FULL_NAME" --body "AI content feedback agent did not produce file changes."
+  add_issue_comment "$ISSUE_NUMBER" "AI content feedback agent did not produce file changes."
   exit 0
 fi
 
@@ -165,8 +206,8 @@ git push origin "$FINAL_BRANCH"
 PR_TITLE="$(node -e "import('./scripts/content-feedback-agent/lib.mjs').then(({buildPrTitle}) => console.log(buildPrTitle(Number(process.argv[1]))))" "$ISSUE_NUMBER")"
 PR_BODY="$(node -e "import('./scripts/content-feedback-agent/lib.mjs').then(({buildPrBody}) => console.log(buildPrBody({ issueNumber: Number(process.argv[1]), summary: process.argv[2], verification: ['npm run generate', 'npm run test', 'npm run build'] })))" "$ISSUE_NUMBER" "$SUMMARY")"
 
-PR_URL="$(gh pr create --repo "$REPO_FULL_NAME" --base "$BASE_BRANCH" --head "$FINAL_BRANCH" --title "$PR_TITLE" --body "$PR_BODY")"
-gh issue comment "$ISSUE_NUMBER" --repo "$REPO_FULL_NAME" --body "AI content feedback agent opened PR: $PR_URL"
+PR_URL="$(create_pull_request "$FINAL_BRANCH" "$PR_TITLE" "$PR_BODY")"
+add_issue_comment "$ISSUE_NUMBER" "AI content feedback agent opened PR: $PR_URL"
 
 if [[ -n "${FEISHU_WEBHOOK:-}" ]]; then
   node -e "fetch(process.env.FEISHU_WEBHOOK, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ msg_type: 'text', content: { text: 'Knowledge feedback PR created: ' + process.argv[1] } }) })" "$PR_URL"
