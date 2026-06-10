@@ -8,10 +8,11 @@
     "generate": "node scripts/generate-knowledge-data.mjs",
     "test:feedback": "tsc --module NodeNext --moduleResolution NodeNext --target ES2022 --strict --esModuleInterop --skipLibCheck --outDir /tmp/knowledge-web-feedback-tests src/feedback.ts tests/feedback.test.ts && node /tmp/knowledge-web-feedback-tests/tests/feedback.test.js",
     "test:giscus": "tsc --module NodeNext --moduleResolution NodeNext --target ES2022 --strict --esModuleInterop --skipLibCheck --outDir /tmp/knowledge-web-giscus-tests src/giscus.ts tests/giscus.test.ts && node /tmp/knowledge-web-giscus-tests/tests/giscus.test.js",
+    "test:markdown": "rm -rf .tmp/markdown-tests && tsc --module NodeNext --moduleResolution NodeNext --target ES2022 --strict --esModuleInterop --skipLibCheck --jsx react-jsx --outDir .tmp/markdown-tests src/markdown.tsx tests/markdown.test.tsx && node .tmp/markdown-tests/tests/markdown.test.js",
     "test:navigation": "tsc --module NodeNext --moduleResolution NodeNext --target ES2022 --strict --esModuleInterop --skipLibCheck --outDir /tmp/knowledge-web-tests src/navigation.ts tests/navigation.test.ts && node /tmp/knowledge-web-tests/tests/navigation.test.js",
     "test:search": "tsc --module NodeNext --moduleResolution NodeNext --target ES2022 --strict --esModuleInterop --skipLibCheck --outDir /tmp/knowledge-web-search-tests src/search.ts tests/search.test.ts && node /tmp/knowledge-web-search-tests/tests/search.test.js",
     "test:search-view": "tsc --module NodeNext --moduleResolution NodeNext --target ES2022 --strict --esModuleInterop --skipLibCheck --outDir /tmp/knowledge-web-search-view-tests src/search-view.ts tests/search-view.test.ts && node /tmp/knowledge-web-search-view-tests/tests/search-view.test.js",
-    "test": "npm run test:feedback && npm run test:giscus && npm run test:search && npm run test:search-view && npm run test:navigation",
+    "test": "npm run test:feedback && npm run test:giscus && npm run test:markdown && npm run test:search && npm run test:search-view && npm run test:navigation",
     "build": "npm run generate && tsc --noEmit && vite build",
     "preview": "vite preview --host 0.0.0.0"
   },
@@ -19,6 +20,9 @@
     "@vitejs/plugin-react": "^4.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-markdown": "^10.1.0",
+    "rehype-sanitize": "^6.0.0",
+    "remark-gfm": "^4.0.1",
     "typescript": "^5.7.2",
     "vite": "^6.0.0"
   },

@@ -1,4 +1,4 @@
-import { createElement, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   knowledgeChunks,
   knowledgeDocs,
@@ -18,6 +18,7 @@ import {
   type GiscusConfig,
 } from './giscus';
 import { flattenDocIds, getAdjacentDocIds, getDefaultExpandedSections } from './navigation';
+import { MarkdownContent } from './markdown';
 import {
   findRuntimeRelatedKnowledge,
   highlightText,
@@ -34,198 +35,6 @@ const giscusConfig: GiscusConfig = {
   category: import.meta.env.VITE_GISCUS_CATEGORY || baseGiscusConfig.category,
   categoryId: import.meta.env.VITE_GISCUS_CATEGORY_ID || baseGiscusConfig.categoryId,
 };
-
-function escapeHtml(value: string) {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-function slugify(text: string) {
-  return text
-    .trim()
-    .toLowerCase()
-    .replace(/[`*_~[\]()]/g, '')
-    .replace(/[^\p{L}\p{N}\s-]/gu, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
-}
-
-function inlineMarkdown(value: string) {
-  let html = escapeHtml(value);
-  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-  html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-  html = html.replace(
-    /\[([^\]]+)]\(([^)]+)\)/g,
-    '<a href="$2" target="_blank" rel="noreferrer">$1</a>',
-  );
-  return html;
-}
-
-function plainMarkdown(value: string) {
-  return value
-    .replace(/```[\s\S]*?```/g, ' ')
-    .replace(/`([^`]+)`/g, '$1')
-    .replace(/!\[[^\]]*]\([^)]*\)/g, ' ')
-    .replace(/\[([^\]]+)]\([^)]*\)/g, '$1')
-    .replace(/^#{1,6}\s+/gm, '')
-    .replace(/^>\s?/gm, '')
-    .replace(/[*_~]/g, '')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function renderMarkdown(
-  markdown: string,
-  options?: {
-    onFeedback?: (target: Pick<ContentFeedbackTarget, 'sectionTitle' | 'quote'>) => void;
-  },
-) {
-  const lines = markdown.split('\n');
-  const nodes: ReactNode[] = [];
-  const usedSlugs = new Map<string, number>();
-  let index = 0;
-  let currentSectionTitle = '';
-
-  const nextSlug = (text: string) => {
-    const base = slugify(text) || `heading-${nodes.length + 1}`;
-    const count = usedSlugs.get(base) ?? 0;
-    usedSlugs.set(base, count + 1);
-    return count === 0 ? base : `${base}-${count + 1}`;
-  };
-
-  while (index < lines.length) {
-    const line = lines[index];
-
-    if (!line.trim()) {
-      index += 1;
-      continue;
-    }
-
-    if (line.startsWith('```')) {
-      const language = line.slice(3).trim();
-      const code: string[] = [];
-      index += 1;
-      while (index < lines.length && !lines[index].startsWith('```')) {
-        code.push(lines[index]);
-        index += 1;
-      }
-      index += 1;
-      nodes.push(
-        <pre className="code-block" key={`code-${index}`}>
-          {language ? <span className="code-language">{language}</span> : null}
-          <code>{code.join('\n')}</code>
-        </pre>,
-      );
-      continue;
-    }
-
-    const heading = line.match(/^(#{1,6})\s+(.+)$/);
-    if (heading) {
-      const level = heading[1].length;
-      const text = heading[2].trim().replace(/\s+#$/, '');
-      const slug = nextSlug(text);
-      if (level <= 3) {
-        currentSectionTitle = text;
-      }
-      nodes.push(createElement(`h${Math.min(level, 4)}`, { id: slug, key: `heading-${index}` }, text));
-      index += 1;
-      continue;
-    }
-
-    if (line.startsWith('>')) {
-      const quote: string[] = [];
-      while (index < lines.length && lines[index].startsWith('>')) {
-        quote.push(lines[index].replace(/^>\s?/, ''));
-        index += 1;
-      }
-      nodes.push(
-        <blockquote
-          key={`quote-${index}`}
-          dangerouslySetInnerHTML={{ __html: inlineMarkdown(quote.join(' ')) }}
-        />,
-      );
-      continue;
-    }
-
-    if (/^\s*[-*]\s+/.test(line)) {
-      const items: string[] = [];
-      while (index < lines.length && /^\s*[-*]\s+/.test(lines[index])) {
-        items.push(lines[index].replace(/^\s*[-*]\s+/, ''));
-        index += 1;
-      }
-      nodes.push(
-        <ul key={`ul-${index}`}>
-          {items.map((item, itemIndex) => (
-            <li
-              dangerouslySetInnerHTML={{ __html: inlineMarkdown(item) }}
-              key={`${item}-${itemIndex}`}
-            />
-          ))}
-        </ul>,
-      );
-      continue;
-    }
-
-    if (/^\s*\d+\.\s+/.test(line)) {
-      const items: string[] = [];
-      while (index < lines.length && /^\s*\d+\.\s+/.test(lines[index])) {
-        items.push(lines[index].replace(/^\s*\d+\.\s+/, ''));
-        index += 1;
-      }
-      nodes.push(
-        <ol key={`ol-${index}`}>
-          {items.map((item, itemIndex) => (
-            <li
-              dangerouslySetInnerHTML={{ __html: inlineMarkdown(item) }}
-              key={`${item}-${itemIndex}`}
-            />
-          ))}
-        </ol>,
-      );
-      continue;
-    }
-
-    const paragraph: string[] = [];
-    while (
-      index < lines.length &&
-      lines[index].trim() &&
-      !lines[index].startsWith('```') &&
-      !/^(#{1,6})\s+/.test(lines[index]) &&
-      !lines[index].startsWith('>') &&
-      !/^\s*[-*]\s+/.test(lines[index]) &&
-      !/^\s*\d+\.\s+/.test(lines[index])
-    ) {
-      paragraph.push(lines[index]);
-      index += 1;
-    }
-    nodes.push(
-      <div className="feedback-target" key={`p-${index}`}>
-        <p dangerouslySetInnerHTML={{ __html: inlineMarkdown(paragraph.join(' ')) }} />
-        {options?.onFeedback ? (
-          <button
-            className="inline-feedback-button"
-            onClick={() =>
-              options.onFeedback?.({
-                sectionTitle: currentSectionTitle || undefined,
-                quote: plainMarkdown(paragraph.join(' ')),
-              })
-            }
-            type="button"
-          >
-            反馈此段
-          </button>
-        ) : null}
-      </div>,
-    );
-  }
-
-  return nodes;
-}
 
 function findInitialDoc() {
   return (
@@ -827,7 +636,7 @@ export default function App() {
             </div>
           </div>
           <div className="markdown-body">
-            {renderMarkdown(selectedDoc.body, { onFeedback: openInlineFeedback })}
+            <MarkdownContent markdown={selectedDoc.body} onFeedback={openInlineFeedback} />
           </div>
           <RelatedKnowledge docs={relatedDocs} onSelect={selectDoc} />
           <GiscusComments doc={selectedDoc} />

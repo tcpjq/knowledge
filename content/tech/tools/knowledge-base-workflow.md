@@ -244,11 +244,10 @@ knowledge:content/tech/tools/knowledge-base-workflow
 
 ## 评论和反馈的区别
 
-```text
-类型  存储位置              适合内容                  是否需要处理
-评论  GitHub Discussions  讨论、补充、交流          不一定
-反馈  GitHub Issues       缺失、错误、过时、待修改  是
-```
+| 类型 | 存储位置 | 适合内容 | 是否需要处理 |
+| --- | --- | --- | --- |
+| 评论 | GitHub Discussions | 讨论、补充、交流 | 不一定 |
+| 反馈 | GitHub Issues | 缺失、错误、过时、待修改 | 是 |
 
 简单判断：
 
