@@ -392,12 +392,16 @@ function SelectionKnowledgePopover({
               onClick={() => onSelect(result.doc)}
               type="button"
             >
-              <strong>{result.doc.title}</strong>
+              <strong>
+                <HighlightedText parts={highlightText(result.doc.title, state.text)} />
+              </strong>
               <span>
                 {result.doc.moduleLabel} / {result.doc.sectionLabel}
                 {result.chunk ? ` / ${result.chunk.heading}` : ''}
               </span>
-              <small>{result.snippet}</small>
+              <small>
+                <HighlightedText parts={highlightText(result.snippet, state.text)} />
+              </small>
             </button>
           ))}
         </div>
