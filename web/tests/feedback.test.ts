@@ -59,6 +59,7 @@ assertEqual(
 const url = new URL(buildContentFeedbackIssueUrl(target));
 
 assertEqual(url.origin + url.pathname, 'https://github.com/tcpjq/knowledge/issues/new', 'opens a new GitHub issue');
+assertEqual(url.searchParams.get('template'), 'content-feedback.md', 'uses the content feedback issue template');
 assertEqual(url.searchParams.get('labels'), 'content-feedback', 'applies content-feedback label');
 assertEqual(
   url.searchParams.get('title'),

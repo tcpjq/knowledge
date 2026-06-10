@@ -44,6 +44,7 @@ export function buildContentFeedbackBody(target: ContentFeedbackTarget) {
 
 export function buildContentFeedbackIssueUrl(target: ContentFeedbackTarget) {
   const url = new URL(`https://github.com/${feedbackRepo}/issues/new`);
+  url.searchParams.set('template', 'content-feedback.md');
   url.searchParams.set('title', `内容反馈：${target.docTitle}`);
   url.searchParams.set('body', buildContentFeedbackBody(target));
   url.searchParams.set('labels', 'content-feedback');
