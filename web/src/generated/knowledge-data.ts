@@ -41,94 +41,6 @@ export type KnowledgeChunk = {
 
 export const knowledgeDocs: KnowledgeDoc[] = [
   {
-    "id": "content/communication/anxiety-to-action-narrative",
-    "title": "焦虑转行动的叙事框架",
-    "path": "content/communication/anxiety-to-action-narrative.md",
-    "module": "communication",
-    "moduleLabel": "沟通",
-    "section": "general",
-    "sectionLabel": "通用",
-    "tags": [
-      "anxiety",
-      "self-narrative",
-      "action"
-    ],
-    "headings": [
-      {
-        "level": 1,
-        "text": "焦虑转行动的叙事框架",
-        "slug": "焦虑转行动的叙事框架"
-      },
-      {
-        "level": 2,
-        "text": "核心结论",
-        "slug": "核心结论"
-      },
-      {
-        "level": 2,
-        "text": "背景",
-        "slug": "背景"
-      },
-      {
-        "level": 2,
-        "text": "叙事切换",
-        "slug": "叙事切换"
-      },
-      {
-        "level": 3,
-        "text": "时间叙事",
-        "slug": "时间叙事"
-      },
-      {
-        "level": 3,
-        "text": "能量叙事",
-        "slug": "能量叙事"
-      },
-      {
-        "level": 3,
-        "text": "行动叙事",
-        "slug": "行动叙事"
-      },
-      {
-        "level": 3,
-        "text": "旁观者叙事",
-        "slug": "旁观者叙事"
-      },
-      {
-        "level": 3,
-        "text": "成本叙事",
-        "slug": "成本叙事"
-      },
-      {
-        "level": 3,
-        "text": "降损叙事",
-        "slug": "降损叙事"
-      },
-      {
-        "level": 2,
-        "text": "可直接使用的自我对话",
-        "slug": "可直接使用的自我对话"
-      },
-      {
-        "level": 2,
-        "text": "例子",
-        "slug": "例子"
-      },
-      {
-        "level": 2,
-        "text": "使用边界",
-        "slug": "使用边界"
-      },
-      {
-        "level": 2,
-        "text": "关联",
-        "slug": "关联"
-      }
-    ],
-    "body": "\n# 焦虑转行动的叙事框架\n\n## 核心结论\n\n焦虑不一定要先被消灭，才可以开始行动。更实用的叙事是：焦虑可以存在，但它必须服务于行动；如果它不能给出下一步，就不能占用全部注意力。\n\n关键不是“我能不能立刻平静”，而是“在焦虑存在的情况下，我还能不能推进一小步”。\n\n## 背景\n\n焦虑常常让人误以为自己正在处理问题，但很多时候只是在反复模拟风险。时间不会因为焦虑而暂停：焦虑，时间会过去；不焦虑，时间也会过去。\n\n因此，注意力应从“如何完全不焦虑”转向“如何让这段时间留下行动痕迹”。\n\n## 叙事切换\n\n### 时间叙事\n\n旧叙事：\n\n> 我现在状态不好，等不焦虑了再开始。\n\n新叙事：\n\n> 时间无论如何都会过去。我无法阻止时间流逝，但可以决定这段时间留下什么痕迹。\n\n这个叙事把目标从“先恢复完美状态”改成“带着不安推进一点点”。\n\n### 能量叙事\n\n旧叙事：\n\n> 焦虑说明我不行。\n\n新叙事：\n\n> 焦虑说明我在乎某件事。它是一股没有找到出口的行动能量。\n\n可以追问：\n\n- 这个焦虑想让我保护什么？\n- 它在提醒我哪件事不能再拖？\n- 我能把它转成哪个 10 分钟动作？\n\n### 行动叙事\n\n旧叙事：\n\n> 我得先把心情调整好，才能工作。\n\n新叙事：\n\n> 行动不是好心情的结果，行动也是重建心情的手段。\n\n焦虑时不需要先完成全局任务，只需要启动一个小到无法拒绝的动作。\n\n### 旁观者叙事\n\n旧叙事：\n\n> 我很焦虑。\n\n新叙事：\n\n> 我注意到，身体里正在出现焦虑。大脑正在预测危险。这是一个信号，不是命令。\n\n这个改写能把自己从情绪中抽离出来。焦虑可以被看见，但不必由它来做决定。\n\n### 成本叙事\n\n旧叙事：\n\n> 我得继续想清楚，否则不安全。\n\n新叙事：\n\n> 焦虑如果不能帮我决策、完成任务或给出下一步，就不能继续占用全部注意力。\n\n焦虑可以提醒风险，但不能替代行动。否则它只是在消耗注意力。\n\n### 降损叙事\n\n旧叙事：\n\n> 今天必须彻底振作、彻底高效。\n\n新叙事：\n\n> 今天不需要完美翻盘，只需要不要把局面交给惯性。\n\n焦虑强的时候，目标可以降到：\n\n- 做 20 分钟。\n- 写 100 字。\n- 处理 1 个最小任务。\n- 发出一个粗糙版本。\n- 把问题列清楚。\n\n## 可直接使用的自我对话\n\n> 我现在焦虑，说明我在乎。  \n> 但焦虑不是行动本身。  \n> 时间无论如何都会过去。  \n> 我不要求自己马上平静，只要求自己做一个 10 分钟动作。  \n> 做完以后，再重新判断。\n\n## 例子\n\n- 焦虑“工作做不完”：列出今天唯一最重要的一件事，然后只做第一个 10 分钟动作。\n- 焦虑“别人评价我”：先发出一个不完美版本，把反馈变成下一轮输入。\n- 焦虑“未来不确定”：设计一个可逆的小实验，而不是试图一次想出终局答案。\n\n## 使用边界\n\n这套框架适合处理日常焦虑、拖延和工作状态波动。如果焦虑持续影响睡眠、饮食、工作、人际关系，或出现自伤念头，应优先寻求专业帮助。\n\n## 关联\n\n- [高效参与方案评审](effective-participation-in-design-review.md)\n",
-    "searchText": "焦虑转行动的叙事框架 content/communication/anxiety-to-action-narrative.md 沟通 通用 anxiety self-narrative action 焦虑转行动的叙事框架 核心结论 焦虑不一定要先被消灭，才可以开始行动。更实用的叙事是：焦虑可以存在，但它必须服务于行动；如果它不能给出下一步，就不能占用全部注意力。 关键不是“我能不能立刻平静”，而是“在焦虑存在的情况下，我还能不能推进一小步”。 背景 焦虑常常让人误以为自己正在处理问题，但很多时候只是在反复模拟风险。时间不会因为焦虑而暂停：焦虑，时间会过去；不焦虑，时间也会过去。 因此，注意力应从“如何完全不焦虑”转向“如何让这段时间留下行动痕迹”。 叙事切换 时间叙事 旧叙事： 我现在状态不好，等不焦虑了再开始。 新叙事： 时间无论如何都会过去。我无法阻止时间流逝，但可以决定这段时间留下什么痕迹。 这个叙事把目标从“先恢复完美状态”改成“带着不安推进一点点”。 能量叙事 旧叙事： 焦虑说明我不行。 新叙事： 焦虑说明我在乎某件事。它是一股没有找到出口的行动能量。 可以追问： - 这个焦虑想让我保护什么？ - 它在提醒我哪件事不能再拖？ - 我能把它转成哪个 10 分钟动作？ 行动叙事 旧叙事： 我得先把心情调整好，才能工作。 新叙事： 行动不是好心情的结果，行动也是重建心情的手段。 焦虑时不需要先完成全局任务，只需要启动一个小到无法拒绝的动作。 旁观者叙事 旧叙事： 我很焦虑。 新叙事： 我注意到，身体里正在出现焦虑。大脑正在预测危险。这是一个信号，不是命令。 这个改写能把自己从情绪中抽离出来。焦虑可以被看见，但不必由它来做决定。 成本叙事 旧叙事： 我得继续想清楚，否则不安全。 新叙事： 焦虑如果不能帮我决策、完成任务或给出下一步，就不能继续占用全部注意力。 焦虑可以提醒风险，但不能替代行动。否则它只是在消耗注意力。 降损叙事 旧叙事： 今天必须彻底振作、彻底高效。 新叙事： 今天不需要完美翻盘，只需要不要把局面交给惯性。 焦虑强的时候，目标可以降到： - 做 20 分钟。 - 写 100 字。 - 处理 1 个最小任务。 - 发出一个粗糙版本。 - 把问题列清楚。 可直接使用的自我对话 我现在焦虑，说明我在乎。 但焦虑不是行动本身。 时间无论如何都会过去。 我不要求自己马上平静，只要求自己做一个 10 分钟动作。 做完以后，再重新判断。 例子 - 焦虑“工作做不完”：列出今天唯一最重要的一件事，然后只做第一个 10 分钟动作。 - 焦虑“别人评价我”：先发出一个不完美版本，把反馈变成下一轮输入。 - 焦虑“未来不确定”：设计一个可逆的小实验，而不是试图一次想出终局答案。 使用边界 这套框架适合处理日常焦虑、拖延和工作状态波动。如果焦虑持续影响睡眠、饮食、工作、人际关系，或出现自伤念头，应优先寻求专业帮助。 关联 - 高效参与方案评审"
-  },
-  {
     "id": "content/communication/effective-participation-in-design-review",
     "title": "高效参与方案评审",
     "path": "content/communication/effective-participation-in-design-review.md",
@@ -214,11 +126,6 @@ export const knowledgeDocs: KnowledgeDoc[] = [
       },
       {
         "level": 2,
-        "text": "自我叙事",
-        "slug": "自我叙事"
-      },
-      {
-        "level": 2,
         "text": "会议",
         "slug": "会议"
       },
@@ -228,8 +135,125 @@ export const knowledgeDocs: KnowledgeDoc[] = [
         "slug": "章节"
       }
     ],
-    "body": "# 沟通\n\n沟通模块用于沉淀表达、写作、会议、反馈、谈判、协作和关系处理。\n\n## 自我叙事\n\n- [焦虑转行动的叙事框架](anxiety-to-action-narrative.md)\n\n## 会议\n\n- [高效参与方案评审](effective-participation-in-design-review.md)\n\n## 章节\n\n暂无更多章节。\n",
-    "searchText": "沟通 content/communication/index.md 沟通 概览 沟通 沟通模块用于沉淀表达、写作、会议、反馈、谈判、协作和关系处理。 自我叙事 - 焦虑转行动的叙事框架 会议 - 高效参与方案评审 章节 暂无更多章节。"
+    "body": "# 沟通\n\n沟通模块用于沉淀表达、写作、会议、反馈、谈判、协作和关系处理。\n\n## 会议\n\n- [高效参与方案评审](effective-participation-in-design-review.md)\n\n## 章节\n\n暂无更多章节。\n",
+    "searchText": "沟通 content/communication/index.md 沟通 概览 沟通 沟通模块用于沉淀表达、写作、会议、反馈、谈判、协作和关系处理。 会议 - 高效参与方案评审 章节 暂无更多章节。"
+  },
+  {
+    "id": "content/general/anxiety-to-action-narrative",
+    "title": "焦虑转行动的叙事框架",
+    "path": "content/general/anxiety-to-action-narrative.md",
+    "module": "general",
+    "moduleLabel": "通用",
+    "section": "general",
+    "sectionLabel": "通用",
+    "tags": [
+      "anxiety",
+      "self-narrative",
+      "action"
+    ],
+    "headings": [
+      {
+        "level": 1,
+        "text": "焦虑转行动的叙事框架",
+        "slug": "焦虑转行动的叙事框架"
+      },
+      {
+        "level": 2,
+        "text": "核心结论",
+        "slug": "核心结论"
+      },
+      {
+        "level": 2,
+        "text": "背景",
+        "slug": "背景"
+      },
+      {
+        "level": 2,
+        "text": "叙事切换",
+        "slug": "叙事切换"
+      },
+      {
+        "level": 3,
+        "text": "时间叙事",
+        "slug": "时间叙事"
+      },
+      {
+        "level": 3,
+        "text": "能量叙事",
+        "slug": "能量叙事"
+      },
+      {
+        "level": 3,
+        "text": "行动叙事",
+        "slug": "行动叙事"
+      },
+      {
+        "level": 3,
+        "text": "旁观者叙事",
+        "slug": "旁观者叙事"
+      },
+      {
+        "level": 3,
+        "text": "成本叙事",
+        "slug": "成本叙事"
+      },
+      {
+        "level": 3,
+        "text": "降损叙事",
+        "slug": "降损叙事"
+      },
+      {
+        "level": 2,
+        "text": "可直接使用的自我对话",
+        "slug": "可直接使用的自我对话"
+      },
+      {
+        "level": 2,
+        "text": "例子",
+        "slug": "例子"
+      },
+      {
+        "level": 2,
+        "text": "使用边界",
+        "slug": "使用边界"
+      },
+      {
+        "level": 2,
+        "text": "关联",
+        "slug": "关联"
+      }
+    ],
+    "body": "\n# 焦虑转行动的叙事框架\n\n## 核心结论\n\n焦虑不一定要先被消灭，才可以开始行动。更实用的叙事是：焦虑可以存在，但它必须服务于行动；如果它不能给出下一步，就不能占用全部注意力。\n\n关键不是“我能不能立刻平静”，而是“在焦虑存在的情况下，我还能不能推进一小步”。\n\n## 背景\n\n焦虑常常让人误以为自己正在处理问题，但很多时候只是在反复模拟风险。时间不会因为焦虑而暂停：焦虑，时间会过去；不焦虑，时间也会过去。\n\n因此，注意力应从“如何完全不焦虑”转向“如何让这段时间留下行动痕迹”。\n\n## 叙事切换\n\n### 时间叙事\n\n旧叙事：\n\n> 我现在状态不好，等不焦虑了再开始。\n\n新叙事：\n\n> 时间无论如何都会过去。我无法阻止时间流逝，但可以决定这段时间留下什么痕迹。\n\n这个叙事把目标从“先恢复完美状态”改成“带着不安推进一点点”。\n\n### 能量叙事\n\n旧叙事：\n\n> 焦虑说明我不行。\n\n新叙事：\n\n> 焦虑说明我在乎某件事。它是一股没有找到出口的行动能量。\n\n可以追问：\n\n- 这个焦虑想让我保护什么？\n- 它在提醒我哪件事不能再拖？\n- 我能把它转成哪个 10 分钟动作？\n\n### 行动叙事\n\n旧叙事：\n\n> 我得先把心情调整好，才能工作。\n\n新叙事：\n\n> 行动不是好心情的结果，行动也是重建心情的手段。\n\n焦虑时不需要先完成全局任务，只需要启动一个小到无法拒绝的动作。\n\n### 旁观者叙事\n\n旧叙事：\n\n> 我很焦虑。\n\n新叙事：\n\n> 我注意到，身体里正在出现焦虑。大脑正在预测危险。这是一个信号，不是命令。\n\n这个改写能把自己从情绪中抽离出来。焦虑可以被看见，但不必由它来做决定。\n\n### 成本叙事\n\n旧叙事：\n\n> 我得继续想清楚，否则不安全。\n\n新叙事：\n\n> 焦虑如果不能帮我决策、完成任务或给出下一步，就不能继续占用全部注意力。\n\n焦虑可以提醒风险，但不能替代行动。否则它只是在消耗注意力。\n\n### 降损叙事\n\n旧叙事：\n\n> 今天必须彻底振作、彻底高效。\n\n新叙事：\n\n> 今天不需要完美翻盘，只需要不要把局面交给惯性。\n\n焦虑强的时候，目标可以降到：\n\n- 做 20 分钟。\n- 写 100 字。\n- 处理 1 个最小任务。\n- 发出一个粗糙版本。\n- 把问题列清楚。\n\n## 可直接使用的自我对话\n\n> 我现在焦虑，说明我在乎。  \n> 但焦虑不是行动本身。  \n> 时间无论如何都会过去。  \n> 我不要求自己马上平静，只要求自己做一个 10 分钟动作。  \n> 做完以后，再重新判断。\n\n## 例子\n\n- 焦虑“工作做不完”：列出今天唯一最重要的一件事，然后只做第一个 10 分钟动作。\n- 焦虑“别人评价我”：先发出一个不完美版本，把反馈变成下一轮输入。\n- 焦虑“未来不确定”：设计一个可逆的小实验，而不是试图一次想出终局答案。\n\n## 使用边界\n\n这套框架适合处理日常焦虑、拖延和工作状态波动。如果焦虑持续影响睡眠、饮食、工作、人际关系，或出现自伤念头，应优先寻求专业帮助。\n\n## 关联\n\n- [高效参与方案评审](../communication/effective-participation-in-design-review.md)\n",
+    "searchText": "焦虑转行动的叙事框架 content/general/anxiety-to-action-narrative.md 通用 通用 anxiety self-narrative action 焦虑转行动的叙事框架 核心结论 焦虑不一定要先被消灭，才可以开始行动。更实用的叙事是：焦虑可以存在，但它必须服务于行动；如果它不能给出下一步，就不能占用全部注意力。 关键不是“我能不能立刻平静”，而是“在焦虑存在的情况下，我还能不能推进一小步”。 背景 焦虑常常让人误以为自己正在处理问题，但很多时候只是在反复模拟风险。时间不会因为焦虑而暂停：焦虑，时间会过去；不焦虑，时间也会过去。 因此，注意力应从“如何完全不焦虑”转向“如何让这段时间留下行动痕迹”。 叙事切换 时间叙事 旧叙事： 我现在状态不好，等不焦虑了再开始。 新叙事： 时间无论如何都会过去。我无法阻止时间流逝，但可以决定这段时间留下什么痕迹。 这个叙事把目标从“先恢复完美状态”改成“带着不安推进一点点”。 能量叙事 旧叙事： 焦虑说明我不行。 新叙事： 焦虑说明我在乎某件事。它是一股没有找到出口的行动能量。 可以追问： - 这个焦虑想让我保护什么？ - 它在提醒我哪件事不能再拖？ - 我能把它转成哪个 10 分钟动作？ 行动叙事 旧叙事： 我得先把心情调整好，才能工作。 新叙事： 行动不是好心情的结果，行动也是重建心情的手段。 焦虑时不需要先完成全局任务，只需要启动一个小到无法拒绝的动作。 旁观者叙事 旧叙事： 我很焦虑。 新叙事： 我注意到，身体里正在出现焦虑。大脑正在预测危险。这是一个信号，不是命令。 这个改写能把自己从情绪中抽离出来。焦虑可以被看见，但不必由它来做决定。 成本叙事 旧叙事： 我得继续想清楚，否则不安全。 新叙事： 焦虑如果不能帮我决策、完成任务或给出下一步，就不能继续占用全部注意力。 焦虑可以提醒风险，但不能替代行动。否则它只是在消耗注意力。 降损叙事 旧叙事： 今天必须彻底振作、彻底高效。 新叙事： 今天不需要完美翻盘，只需要不要把局面交给惯性。 焦虑强的时候，目标可以降到： - 做 20 分钟。 - 写 100 字。 - 处理 1 个最小任务。 - 发出一个粗糙版本。 - 把问题列清楚。 可直接使用的自我对话 我现在焦虑，说明我在乎。 但焦虑不是行动本身。 时间无论如何都会过去。 我不要求自己马上平静，只要求自己做一个 10 分钟动作。 做完以后，再重新判断。 例子 - 焦虑“工作做不完”：列出今天唯一最重要的一件事，然后只做第一个 10 分钟动作。 - 焦虑“别人评价我”：先发出一个不完美版本，把反馈变成下一轮输入。 - 焦虑“未来不确定”：设计一个可逆的小实验，而不是试图一次想出终局答案。 使用边界 这套框架适合处理日常焦虑、拖延和工作状态波动。如果焦虑持续影响睡眠、饮食、工作、人际关系，或出现自伤念头，应优先寻求专业帮助。 关联 - 高效参与方案评审"
+  },
+  {
+    "id": "content/general/index",
+    "title": "通用",
+    "path": "content/general/index.md",
+    "module": "general",
+    "moduleLabel": "通用",
+    "section": "root",
+    "sectionLabel": "概览",
+    "tags": [],
+    "headings": [
+      {
+        "level": 1,
+        "text": "通用",
+        "slug": "通用"
+      },
+      {
+        "level": 2,
+        "text": "自我管理",
+        "slug": "自我管理"
+      },
+      {
+        "level": 2,
+        "text": "章节",
+        "slug": "章节"
+      }
+    ],
+    "body": "# 通用\n\n通用模块用于沉淀暂不归入专业模块、但可复用的个人管理、思维框架和日常实践。\n\n## 自我管理\n\n- [焦虑转行动的叙事框架](anxiety-to-action-narrative.md)\n\n## 章节\n\n暂无更多章节。\n",
+    "searchText": "通用 content/general/index.md 通用 概览 通用 通用模块用于沉淀暂不归入专业模块、但可复用的个人管理、思维框架和日常实践。 自我管理 - 焦虑转行动的叙事框架 章节 暂无更多章节。"
   },
   {
     "id": "content/tech/ai/index",
@@ -953,7 +977,6 @@ export const knowledgeModules: KnowledgeModule[] = [
         "id": "general",
         "label": "通用",
         "docs": [
-          "content/communication/anxiety-to-action-narrative",
           "content/communication/effective-participation-in-design-review"
         ]
       }
@@ -986,94 +1009,31 @@ export const knowledgeModules: KnowledgeModule[] = [
         ]
       }
     ]
+  },
+  {
+    "id": "general",
+    "label": "通用",
+    "description": "没有归入具体模块的通用内容。",
+    "sections": [
+      {
+        "id": "root",
+        "label": "概览",
+        "docs": [
+          "content/general/index"
+        ]
+      },
+      {
+        "id": "general",
+        "label": "通用",
+        "docs": [
+          "content/general/anxiety-to-action-narrative"
+        ]
+      }
+    ]
   }
 ];
 
 export const knowledgeChunks: KnowledgeChunk[] = [
-  {
-    "id": "content/communication/anxiety-to-action-narrative::1",
-    "docId": "content/communication/anxiety-to-action-narrative",
-    "heading": "核心结论",
-    "text": "焦虑不一定要先被消灭，才可以开始行动。更实用的叙事是：焦虑可以存在，但它必须服务于行动；如果它不能给出下一步，就不能占用全部注意力。 关键不是“我能不能立刻平静”，而是“在焦虑存在的情况下，我还能不能推进一小步”。",
-    "searchText": "焦虑转行动的叙事框架 核心结论 焦虑不一定要先被消灭，才可以开始行动。更实用的叙事是：焦虑可以存在，但它必须服务于行动；如果它不能给出下一步，就不能占用全部注意力。 关键不是“我能不能立刻平静”，而是“在焦虑存在的情况下，我还能不能推进一小步”。"
-  },
-  {
-    "id": "content/communication/anxiety-to-action-narrative::2",
-    "docId": "content/communication/anxiety-to-action-narrative",
-    "heading": "背景",
-    "text": "焦虑常常让人误以为自己正在处理问题，但很多时候只是在反复模拟风险。时间不会因为焦虑而暂停：焦虑，时间会过去；不焦虑，时间也会过去。 因此，注意力应从“如何完全不焦虑”转向“如何让这段时间留下行动痕迹”。",
-    "searchText": "焦虑转行动的叙事框架 背景 焦虑常常让人误以为自己正在处理问题，但很多时候只是在反复模拟风险。时间不会因为焦虑而暂停：焦虑，时间会过去；不焦虑，时间也会过去。 因此，注意力应从“如何完全不焦虑”转向“如何让这段时间留下行动痕迹”。"
-  },
-  {
-    "id": "content/communication/anxiety-to-action-narrative::3",
-    "docId": "content/communication/anxiety-to-action-narrative",
-    "heading": "时间叙事",
-    "text": "旧叙事： 我现在状态不好，等不焦虑了再开始。 新叙事： 时间无论如何都会过去。我无法阻止时间流逝，但可以决定这段时间留下什么痕迹。 这个叙事把目标从“先恢复完美状态”改成“带着不安推进一点点”。",
-    "searchText": "焦虑转行动的叙事框架 时间叙事 旧叙事： 我现在状态不好，等不焦虑了再开始。 新叙事： 时间无论如何都会过去。我无法阻止时间流逝，但可以决定这段时间留下什么痕迹。 这个叙事把目标从“先恢复完美状态”改成“带着不安推进一点点”。"
-  },
-  {
-    "id": "content/communication/anxiety-to-action-narrative::4",
-    "docId": "content/communication/anxiety-to-action-narrative",
-    "heading": "能量叙事",
-    "text": "旧叙事： 焦虑说明我不行。 新叙事： 焦虑说明我在乎某件事。它是一股没有找到出口的行动能量。 可以追问： - 这个焦虑想让我保护什么？ - 它在提醒我哪件事不能再拖？ - 我能把它转成哪个 10 分钟动作？",
-    "searchText": "焦虑转行动的叙事框架 能量叙事 旧叙事： 焦虑说明我不行。 新叙事： 焦虑说明我在乎某件事。它是一股没有找到出口的行动能量。 可以追问： - 这个焦虑想让我保护什么？ - 它在提醒我哪件事不能再拖？ - 我能把它转成哪个 10 分钟动作？"
-  },
-  {
-    "id": "content/communication/anxiety-to-action-narrative::5",
-    "docId": "content/communication/anxiety-to-action-narrative",
-    "heading": "行动叙事",
-    "text": "旧叙事： 我得先把心情调整好，才能工作。 新叙事： 行动不是好心情的结果，行动也是重建心情的手段。 焦虑时不需要先完成全局任务，只需要启动一个小到无法拒绝的动作。",
-    "searchText": "焦虑转行动的叙事框架 行动叙事 旧叙事： 我得先把心情调整好，才能工作。 新叙事： 行动不是好心情的结果，行动也是重建心情的手段。 焦虑时不需要先完成全局任务，只需要启动一个小到无法拒绝的动作。"
-  },
-  {
-    "id": "content/communication/anxiety-to-action-narrative::6",
-    "docId": "content/communication/anxiety-to-action-narrative",
-    "heading": "旁观者叙事",
-    "text": "旧叙事： 我很焦虑。 新叙事： 我注意到，身体里正在出现焦虑。大脑正在预测危险。这是一个信号，不是命令。 这个改写能把自己从情绪中抽离出来。焦虑可以被看见，但不必由它来做决定。",
-    "searchText": "焦虑转行动的叙事框架 旁观者叙事 旧叙事： 我很焦虑。 新叙事： 我注意到，身体里正在出现焦虑。大脑正在预测危险。这是一个信号，不是命令。 这个改写能把自己从情绪中抽离出来。焦虑可以被看见，但不必由它来做决定。"
-  },
-  {
-    "id": "content/communication/anxiety-to-action-narrative::7",
-    "docId": "content/communication/anxiety-to-action-narrative",
-    "heading": "成本叙事",
-    "text": "旧叙事： 我得继续想清楚，否则不安全。 新叙事： 焦虑如果不能帮我决策、完成任务或给出下一步，就不能继续占用全部注意力。 焦虑可以提醒风险，但不能替代行动。否则它只是在消耗注意力。",
-    "searchText": "焦虑转行动的叙事框架 成本叙事 旧叙事： 我得继续想清楚，否则不安全。 新叙事： 焦虑如果不能帮我决策、完成任务或给出下一步，就不能继续占用全部注意力。 焦虑可以提醒风险，但不能替代行动。否则它只是在消耗注意力。"
-  },
-  {
-    "id": "content/communication/anxiety-to-action-narrative::8",
-    "docId": "content/communication/anxiety-to-action-narrative",
-    "heading": "降损叙事",
-    "text": "旧叙事： 今天必须彻底振作、彻底高效。 新叙事： 今天不需要完美翻盘，只需要不要把局面交给惯性。 焦虑强的时候，目标可以降到： - 做 20 分钟。 - 写 100 字。 - 处理 1 个最小任务。 - 发出一个粗糙版本。 - 把问题列清楚。",
-    "searchText": "焦虑转行动的叙事框架 降损叙事 旧叙事： 今天必须彻底振作、彻底高效。 新叙事： 今天不需要完美翻盘，只需要不要把局面交给惯性。 焦虑强的时候，目标可以降到： - 做 20 分钟。 - 写 100 字。 - 处理 1 个最小任务。 - 发出一个粗糙版本。 - 把问题列清楚。"
-  },
-  {
-    "id": "content/communication/anxiety-to-action-narrative::9",
-    "docId": "content/communication/anxiety-to-action-narrative",
-    "heading": "可直接使用的自我对话",
-    "text": "我现在焦虑，说明我在乎。 但焦虑不是行动本身。 时间无论如何都会过去。 我不要求自己马上平静，只要求自己做一个 10 分钟动作。 做完以后，再重新判断。",
-    "searchText": "焦虑转行动的叙事框架 可直接使用的自我对话 我现在焦虑，说明我在乎。 但焦虑不是行动本身。 时间无论如何都会过去。 我不要求自己马上平静，只要求自己做一个 10 分钟动作。 做完以后，再重新判断。"
-  },
-  {
-    "id": "content/communication/anxiety-to-action-narrative::10",
-    "docId": "content/communication/anxiety-to-action-narrative",
-    "heading": "例子",
-    "text": "- 焦虑“工作做不完”：列出今天唯一最重要的一件事，然后只做第一个 10 分钟动作。 - 焦虑“别人评价我”：先发出一个不完美版本，把反馈变成下一轮输入。 - 焦虑“未来不确定”：设计一个可逆的小实验，而不是试图一次想出终局答案。",
-    "searchText": "焦虑转行动的叙事框架 例子 - 焦虑“工作做不完”：列出今天唯一最重要的一件事，然后只做第一个 10 分钟动作。 - 焦虑“别人评价我”：先发出一个不完美版本，把反馈变成下一轮输入。 - 焦虑“未来不确定”：设计一个可逆的小实验，而不是试图一次想出终局答案。"
-  },
-  {
-    "id": "content/communication/anxiety-to-action-narrative::11",
-    "docId": "content/communication/anxiety-to-action-narrative",
-    "heading": "使用边界",
-    "text": "这套框架适合处理日常焦虑、拖延和工作状态波动。如果焦虑持续影响睡眠、饮食、工作、人际关系，或出现自伤念头，应优先寻求专业帮助。",
-    "searchText": "焦虑转行动的叙事框架 使用边界 这套框架适合处理日常焦虑、拖延和工作状态波动。如果焦虑持续影响睡眠、饮食、工作、人际关系，或出现自伤念头，应优先寻求专业帮助。"
-  },
-  {
-    "id": "content/communication/anxiety-to-action-narrative::12",
-    "docId": "content/communication/anxiety-to-action-narrative",
-    "heading": "关联",
-    "text": "- 高效参与方案评审",
-    "searchText": "焦虑转行动的叙事框架 关联 - 高效参与方案评审"
-  },
   {
     "id": "content/communication/effective-participation-in-design-review::1",
     "docId": "content/communication/effective-participation-in-design-review",
@@ -1147,23 +1107,121 @@ export const knowledgeChunks: KnowledgeChunk[] = [
   {
     "id": "content/communication/index::2",
     "docId": "content/communication/index",
-    "heading": "自我叙事",
-    "text": "- 焦虑转行动的叙事框架",
-    "searchText": "沟通 自我叙事 - 焦虑转行动的叙事框架"
-  },
-  {
-    "id": "content/communication/index::3",
-    "docId": "content/communication/index",
     "heading": "会议",
     "text": "- 高效参与方案评审",
     "searchText": "沟通 会议 - 高效参与方案评审"
   },
   {
-    "id": "content/communication/index::4",
+    "id": "content/communication/index::3",
     "docId": "content/communication/index",
     "heading": "章节",
     "text": "暂无更多章节。",
     "searchText": "沟通 章节 暂无更多章节。"
+  },
+  {
+    "id": "content/general/anxiety-to-action-narrative::1",
+    "docId": "content/general/anxiety-to-action-narrative",
+    "heading": "核心结论",
+    "text": "焦虑不一定要先被消灭，才可以开始行动。更实用的叙事是：焦虑可以存在，但它必须服务于行动；如果它不能给出下一步，就不能占用全部注意力。 关键不是“我能不能立刻平静”，而是“在焦虑存在的情况下，我还能不能推进一小步”。",
+    "searchText": "焦虑转行动的叙事框架 核心结论 焦虑不一定要先被消灭，才可以开始行动。更实用的叙事是：焦虑可以存在，但它必须服务于行动；如果它不能给出下一步，就不能占用全部注意力。 关键不是“我能不能立刻平静”，而是“在焦虑存在的情况下，我还能不能推进一小步”。"
+  },
+  {
+    "id": "content/general/anxiety-to-action-narrative::2",
+    "docId": "content/general/anxiety-to-action-narrative",
+    "heading": "背景",
+    "text": "焦虑常常让人误以为自己正在处理问题，但很多时候只是在反复模拟风险。时间不会因为焦虑而暂停：焦虑，时间会过去；不焦虑，时间也会过去。 因此，注意力应从“如何完全不焦虑”转向“如何让这段时间留下行动痕迹”。",
+    "searchText": "焦虑转行动的叙事框架 背景 焦虑常常让人误以为自己正在处理问题，但很多时候只是在反复模拟风险。时间不会因为焦虑而暂停：焦虑，时间会过去；不焦虑，时间也会过去。 因此，注意力应从“如何完全不焦虑”转向“如何让这段时间留下行动痕迹”。"
+  },
+  {
+    "id": "content/general/anxiety-to-action-narrative::3",
+    "docId": "content/general/anxiety-to-action-narrative",
+    "heading": "时间叙事",
+    "text": "旧叙事： 我现在状态不好，等不焦虑了再开始。 新叙事： 时间无论如何都会过去。我无法阻止时间流逝，但可以决定这段时间留下什么痕迹。 这个叙事把目标从“先恢复完美状态”改成“带着不安推进一点点”。",
+    "searchText": "焦虑转行动的叙事框架 时间叙事 旧叙事： 我现在状态不好，等不焦虑了再开始。 新叙事： 时间无论如何都会过去。我无法阻止时间流逝，但可以决定这段时间留下什么痕迹。 这个叙事把目标从“先恢复完美状态”改成“带着不安推进一点点”。"
+  },
+  {
+    "id": "content/general/anxiety-to-action-narrative::4",
+    "docId": "content/general/anxiety-to-action-narrative",
+    "heading": "能量叙事",
+    "text": "旧叙事： 焦虑说明我不行。 新叙事： 焦虑说明我在乎某件事。它是一股没有找到出口的行动能量。 可以追问： - 这个焦虑想让我保护什么？ - 它在提醒我哪件事不能再拖？ - 我能把它转成哪个 10 分钟动作？",
+    "searchText": "焦虑转行动的叙事框架 能量叙事 旧叙事： 焦虑说明我不行。 新叙事： 焦虑说明我在乎某件事。它是一股没有找到出口的行动能量。 可以追问： - 这个焦虑想让我保护什么？ - 它在提醒我哪件事不能再拖？ - 我能把它转成哪个 10 分钟动作？"
+  },
+  {
+    "id": "content/general/anxiety-to-action-narrative::5",
+    "docId": "content/general/anxiety-to-action-narrative",
+    "heading": "行动叙事",
+    "text": "旧叙事： 我得先把心情调整好，才能工作。 新叙事： 行动不是好心情的结果，行动也是重建心情的手段。 焦虑时不需要先完成全局任务，只需要启动一个小到无法拒绝的动作。",
+    "searchText": "焦虑转行动的叙事框架 行动叙事 旧叙事： 我得先把心情调整好，才能工作。 新叙事： 行动不是好心情的结果，行动也是重建心情的手段。 焦虑时不需要先完成全局任务，只需要启动一个小到无法拒绝的动作。"
+  },
+  {
+    "id": "content/general/anxiety-to-action-narrative::6",
+    "docId": "content/general/anxiety-to-action-narrative",
+    "heading": "旁观者叙事",
+    "text": "旧叙事： 我很焦虑。 新叙事： 我注意到，身体里正在出现焦虑。大脑正在预测危险。这是一个信号，不是命令。 这个改写能把自己从情绪中抽离出来。焦虑可以被看见，但不必由它来做决定。",
+    "searchText": "焦虑转行动的叙事框架 旁观者叙事 旧叙事： 我很焦虑。 新叙事： 我注意到，身体里正在出现焦虑。大脑正在预测危险。这是一个信号，不是命令。 这个改写能把自己从情绪中抽离出来。焦虑可以被看见，但不必由它来做决定。"
+  },
+  {
+    "id": "content/general/anxiety-to-action-narrative::7",
+    "docId": "content/general/anxiety-to-action-narrative",
+    "heading": "成本叙事",
+    "text": "旧叙事： 我得继续想清楚，否则不安全。 新叙事： 焦虑如果不能帮我决策、完成任务或给出下一步，就不能继续占用全部注意力。 焦虑可以提醒风险，但不能替代行动。否则它只是在消耗注意力。",
+    "searchText": "焦虑转行动的叙事框架 成本叙事 旧叙事： 我得继续想清楚，否则不安全。 新叙事： 焦虑如果不能帮我决策、完成任务或给出下一步，就不能继续占用全部注意力。 焦虑可以提醒风险，但不能替代行动。否则它只是在消耗注意力。"
+  },
+  {
+    "id": "content/general/anxiety-to-action-narrative::8",
+    "docId": "content/general/anxiety-to-action-narrative",
+    "heading": "降损叙事",
+    "text": "旧叙事： 今天必须彻底振作、彻底高效。 新叙事： 今天不需要完美翻盘，只需要不要把局面交给惯性。 焦虑强的时候，目标可以降到： - 做 20 分钟。 - 写 100 字。 - 处理 1 个最小任务。 - 发出一个粗糙版本。 - 把问题列清楚。",
+    "searchText": "焦虑转行动的叙事框架 降损叙事 旧叙事： 今天必须彻底振作、彻底高效。 新叙事： 今天不需要完美翻盘，只需要不要把局面交给惯性。 焦虑强的时候，目标可以降到： - 做 20 分钟。 - 写 100 字。 - 处理 1 个最小任务。 - 发出一个粗糙版本。 - 把问题列清楚。"
+  },
+  {
+    "id": "content/general/anxiety-to-action-narrative::9",
+    "docId": "content/general/anxiety-to-action-narrative",
+    "heading": "可直接使用的自我对话",
+    "text": "我现在焦虑，说明我在乎。 但焦虑不是行动本身。 时间无论如何都会过去。 我不要求自己马上平静，只要求自己做一个 10 分钟动作。 做完以后，再重新判断。",
+    "searchText": "焦虑转行动的叙事框架 可直接使用的自我对话 我现在焦虑，说明我在乎。 但焦虑不是行动本身。 时间无论如何都会过去。 我不要求自己马上平静，只要求自己做一个 10 分钟动作。 做完以后，再重新判断。"
+  },
+  {
+    "id": "content/general/anxiety-to-action-narrative::10",
+    "docId": "content/general/anxiety-to-action-narrative",
+    "heading": "例子",
+    "text": "- 焦虑“工作做不完”：列出今天唯一最重要的一件事，然后只做第一个 10 分钟动作。 - 焦虑“别人评价我”：先发出一个不完美版本，把反馈变成下一轮输入。 - 焦虑“未来不确定”：设计一个可逆的小实验，而不是试图一次想出终局答案。",
+    "searchText": "焦虑转行动的叙事框架 例子 - 焦虑“工作做不完”：列出今天唯一最重要的一件事，然后只做第一个 10 分钟动作。 - 焦虑“别人评价我”：先发出一个不完美版本，把反馈变成下一轮输入。 - 焦虑“未来不确定”：设计一个可逆的小实验，而不是试图一次想出终局答案。"
+  },
+  {
+    "id": "content/general/anxiety-to-action-narrative::11",
+    "docId": "content/general/anxiety-to-action-narrative",
+    "heading": "使用边界",
+    "text": "这套框架适合处理日常焦虑、拖延和工作状态波动。如果焦虑持续影响睡眠、饮食、工作、人际关系，或出现自伤念头，应优先寻求专业帮助。",
+    "searchText": "焦虑转行动的叙事框架 使用边界 这套框架适合处理日常焦虑、拖延和工作状态波动。如果焦虑持续影响睡眠、饮食、工作、人际关系，或出现自伤念头，应优先寻求专业帮助。"
+  },
+  {
+    "id": "content/general/anxiety-to-action-narrative::12",
+    "docId": "content/general/anxiety-to-action-narrative",
+    "heading": "关联",
+    "text": "- 高效参与方案评审",
+    "searchText": "焦虑转行动的叙事框架 关联 - 高效参与方案评审"
+  },
+  {
+    "id": "content/general/index::1",
+    "docId": "content/general/index",
+    "heading": "通用",
+    "text": "通用模块用于沉淀暂不归入专业模块、但可复用的个人管理、思维框架和日常实践。",
+    "searchText": "通用 通用 通用模块用于沉淀暂不归入专业模块、但可复用的个人管理、思维框架和日常实践。"
+  },
+  {
+    "id": "content/general/index::2",
+    "docId": "content/general/index",
+    "heading": "自我管理",
+    "text": "- 焦虑转行动的叙事框架",
+    "searchText": "通用 自我管理 - 焦虑转行动的叙事框架"
+  },
+  {
+    "id": "content/general/index::3",
+    "docId": "content/general/index",
+    "heading": "章节",
+    "text": "暂无更多章节。",
+    "searchText": "通用 章节 暂无更多章节。"
   },
   {
     "id": "content/tech/ai/index::1",
