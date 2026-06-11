@@ -271,6 +271,7 @@ GitHub Issues(content-feedback)
   -> runner 推送 ai/content-feedback-<issue-number> 分支
   -> runner 创建 Pull Request
   -> runner 在原 Issue 评论 PR 链接
+  -> runner 通过飞书机器人通知 PR 链接
   -> 人工 review 并合并 PR
   -> GitHub 构建发布
   -> GitHub 根据 Fixes #<issue-number> 自动关闭 Issue
@@ -361,7 +362,64 @@ Fixes #<issue-number>
 
 这个字段很重要。PR 合并到默认分支后，GitHub 会自动关闭对应 Issue。
 
-### 5. 合并 PR 后 Issue 如何解决
+### 5. PR 创建后推送飞书通知
+
+runner 创建 PR 后，会先在原 Issue 评论 PR 链接，再根据本地环境变量决定是否推送飞书通知。
+
+飞书通知由服务器本地配置控制：
+
+```bash
+FEISHU_WEBHOOK=https://open.feishu.cn/open-apis/bot/v2/hook/<token>
+```
+
+如果 `FEISHU_WEBHOOK` 为空，runner 只创建 PR 和评论 Issue，不发送飞书消息。如果 `FEISHU_WEBHOOK` 有值，runner 会向飞书自定义机器人发送文本消息。消息不能只包含分支或 PR 链接，还要给 reviewer 足够上下文：
+
+```text
+Knowledge feedback PR created
+
+Issue: #<issue-number> <issue-title>
+Issue URL: <issue-url>
+Why: <issue-title>
+What changed: <agent-summary>
+PR: <pr-url>
+Branch: ai/content-feedback-<issue-number>
+```
+
+其中 `Why` 来自反馈 Issue 标题，说明为什么需要这次修改；`What changed` 来自 Codex 写入的结果摘要，说明这次实际改了什么。
+
+配置步骤：
+
+1. 在目标飞书群里添加「自定义机器人」。
+2. 复制机器人 webhook URL。
+3. 写入服务器本地环境文件 `~/.config/knowledge-agent/env`。
+4. 确认环境文件权限只允许当前用户读取。
+
+示例：
+
+```bash
+mkdir -p ~/.config/knowledge-agent
+chmod 700 ~/.config/knowledge-agent
+vim ~/.config/knowledge-agent/env
+chmod 600 ~/.config/knowledge-agent/env
+```
+
+安全设置建议：
+
+- 优先开启飞书机器人的关键词校验，关键词可以设置为 `Knowledge feedback PR created`。
+- 如果开启签名校验，需要给 runner 增加 timestamp 和 sign 计算逻辑；当前脚本只支持普通 webhook。
+- 如果开启 IP 白名单，需要加入运行 agent 的服务器出口 IP。
+- webhook 属于敏感凭据，只保存在服务器本地环境文件，不提交到仓库。
+
+验证方式：
+
+```bash
+cd /jockie/code/my/knowledge
+scripts/content-feedback-agent/run.sh
+```
+
+只有当本轮确实处理了 `content-feedback` Issue 并成功创建 PR 时，飞书才会收到通知。没有可处理 Issue、信息不足、验证失败或 PR 创建失败，都不会发送飞书消息。
+
+### 6. 合并 PR 后 Issue 如何解决
 
 Issue 不由 agent 直接关闭，而是在 PR 合并后由 GitHub 自动关闭。
 
@@ -381,7 +439,7 @@ Body:  Fixes #5
 
 如果 PR 被关闭但没有合并，Issue 仍然 open；这时后续定时扫描可能会再次处理这个 Issue。
 
-### 6. 信息不足时如何处理
+### 7. 信息不足时如何处理
 
 如果 AI 判断 Issue 信息不足，会返回 `blocked`。
 
@@ -398,7 +456,7 @@ runner 会：
 3. 移除 `content-feedback-blocked` 标签。
 4. 等下一轮定时扫描重新处理。
 
-### 7. 当前服务器配置
+### 8. 当前服务器配置
 
 运行配置在服务器本地，不提交到仓库：
 
@@ -416,8 +474,10 @@ WORKTREE_ROOT=/tmp/knowledge-content-feedback-agent
 BASE_BRANCH=main
 BLOCKED_LABEL=content-feedback-blocked
 CODEX_BYPASS_SANDBOX=1
-FEISHU_WEBHOOK=
+FEISHU_WEBHOOK=https://open.feishu.cn/open-apis/bot/v2/hook/<token>
 ```
+
+`FEISHU_WEBHOOK` 可以留空。留空表示关闭飞书通知；配置后表示 PR 创建成功时通知飞书群。
 
 systemd 配置：
 
@@ -442,7 +502,7 @@ cd /jockie/code/my/knowledge/web
 npm install
 ```
 
-### 8. 为什么不在 GitHub Actions 里跑 Codex
+### 9. 为什么不在 GitHub Actions 里跑 Codex
 
 当前选择个人服务器定期扫描，而不是 GitHub Actions 直接跑 Codex，主要原因是：
 

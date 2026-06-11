@@ -92,6 +92,25 @@ cd /home/ubuntu/agents/knowledge/web
 npm install
 ```
 
+## Feishu Notification
+
+Set `FEISHU_WEBHOOK` in `~/.config/knowledge-agent/env` to enable Feishu group notifications after a PR is created.
+
+The notification is sent only after validation passes, the branch is pushed, and the PR is created. It includes enough review context instead of only a branch or PR link:
+
+```text
+Knowledge feedback PR created
+
+Issue: #<issue-number> <issue-title>
+Issue URL: <issue-url>
+Why: <issue-title>
+What changed: <agent-summary>
+PR: <pr-url>
+Branch: ai/content-feedback-<issue-number>
+```
+
+`Why` comes from the feedback issue title. `What changed` comes from the agent result summary. Keep the webhook in the local env file only; do not commit it to the repository.
+
 ## systemd User Timer
 
 Create `~/.config/systemd/user/knowledge-agent.service`:

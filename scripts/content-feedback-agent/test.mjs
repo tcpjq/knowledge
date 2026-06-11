@@ -1,6 +1,7 @@
 import {
   assertAllowedChangedFiles,
   buildBranchName,
+  buildFeishuPrNotification,
   buildPrBody,
   buildPrTitle,
   isAllowedChangedFile,
@@ -67,4 +68,26 @@ assertEqual(
     '- npm run build',
   ].join('\n'),
   'builds PR body',
+);
+
+assertEqual(
+  buildFeishuPrNotification({
+    issueNumber: 42,
+    issueTitle: '内容反馈：补充架构边界',
+    issueUrl: 'https://github.com/tcpjq/knowledge/issues/42',
+    summary: 'Updated the architecture note with clearer boundaries.',
+    prUrl: 'https://github.com/tcpjq/knowledge/pull/43',
+    branch: 'ai/content-feedback-42',
+  }),
+  [
+    'Knowledge feedback PR created',
+    '',
+    'Issue: #42 内容反馈：补充架构边界',
+    'Issue URL: https://github.com/tcpjq/knowledge/issues/42',
+    'Why: 内容反馈：补充架构边界',
+    'What changed: Updated the architecture note with clearer boundaries.',
+    'PR: https://github.com/tcpjq/knowledge/pull/43',
+    'Branch: ai/content-feedback-42',
+  ].join('\n'),
+  'builds Feishu PR notification with review context',
 );

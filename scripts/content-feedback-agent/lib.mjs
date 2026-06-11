@@ -54,3 +54,16 @@ export function buildPrBody({ issueNumber, summary, verification }) {
     verification.map((item) => `- ${item}`).join('\n'),
   ].join('\n');
 }
+
+export function buildFeishuPrNotification({ issueNumber, issueTitle, issueUrl, summary, prUrl, branch }) {
+  return [
+    'Knowledge feedback PR created',
+    '',
+    `Issue: #${issueNumber} ${issueTitle.trim()}`,
+    `Issue URL: ${issueUrl}`,
+    `Why: ${issueTitle.trim()}`,
+    `What changed: ${summary.trim()}`,
+    `PR: ${prUrl}`,
+    `Branch: ${branch}`,
+  ].join('\n');
+}

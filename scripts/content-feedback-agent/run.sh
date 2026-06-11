@@ -57,6 +57,13 @@ add_issue_comment() {
     >/dev/null
 }
 
+issue_title() {
+  local issue_number="${1:?issue number required}"
+
+  gh api -X GET "repos/$REPO_FULL_NAME/issues/$issue_number" \
+    --jq '.title'
+}
+
 open_pr_count_for_branch() {
   local branch="${1:?branch required}"
 
@@ -189,6 +196,10 @@ fi
 
 ISSUE_NUMBER="$(node -e "import('./scripts/content-feedback-agent/lib.mjs').then(({parseAgentResult}) => console.log(parseAgentResult(process.argv[1]).issueNumber))" "$RESULT_JSON")"
 SUMMARY="$(node -e "import('./scripts/content-feedback-agent/lib.mjs').then(({parseAgentResult}) => console.log(parseAgentResult(process.argv[1]).summary))" "$RESULT_JSON")"
+ISSUE_URL="$(node -e "import('./scripts/content-feedback-agent/lib.mjs').then(({parseAgentResult}) => console.log(parseAgentResult(process.argv[1]).issueUrl || ''))" "$RESULT_JSON")"
+if [[ -z "$ISSUE_URL" ]]; then
+  ISSUE_URL="https://github.com/$REPO_FULL_NAME/issues/$ISSUE_NUMBER"
+fi
 FINAL_BRANCH="$(node -e "import('./scripts/content-feedback-agent/lib.mjs').then(({buildBranchName}) => console.log(buildBranchName(Number(process.argv[1]))))" "$ISSUE_NUMBER")"
 
 OPEN_PR_COUNT="$(open_pr_count_for_branch "$FINAL_BRANCH")"
@@ -238,7 +249,9 @@ PR_URL="$(create_pull_request "$FINAL_BRANCH" "$PR_TITLE" "$PR_BODY")"
 add_issue_comment "$ISSUE_NUMBER" "AI content feedback agent opened PR: $PR_URL"
 
 if [[ -n "${FEISHU_WEBHOOK:-}" ]]; then
-  node -e "fetch(process.env.FEISHU_WEBHOOK, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ msg_type: 'text', content: { text: 'Knowledge feedback PR created: ' + process.argv[1] } }) })" "$PR_URL"
+  ISSUE_TITLE="$(issue_title "$ISSUE_NUMBER")"
+  FEISHU_TEXT="$(node -e "import('./scripts/content-feedback-agent/lib.mjs').then(({buildFeishuPrNotification}) => console.log(buildFeishuPrNotification({ issueNumber: Number(process.argv[1]), issueTitle: process.argv[2], issueUrl: process.argv[3], summary: process.argv[4], prUrl: process.argv[5], branch: process.argv[6] })))" "$ISSUE_NUMBER" "$ISSUE_TITLE" "$ISSUE_URL" "$SUMMARY" "$PR_URL" "$FINAL_BRANCH")"
+  FEISHU_TEXT="$FEISHU_TEXT" node -e "fetch(process.env.FEISHU_WEBHOOK, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ msg_type: 'text', content: { text: process.env.FEISHU_TEXT } }) })"
 fi
 
 cd "$REPO_DIR"
