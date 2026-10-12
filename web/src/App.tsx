@@ -62,7 +62,6 @@ function Metadata({ doc }: { doc: KnowledgeDoc }) {
     <div className="doc-meta">
       <span>{doc.moduleLabel}</span>
       <span>{doc.sectionLabel}</span>
-      <span>{doc.path}</span>
       {doc.tags.map((tag) => (
         <span className="tag" key={tag}>
           {tag}
